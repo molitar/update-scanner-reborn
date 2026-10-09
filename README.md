@@ -74,3 +74,17 @@ GNU General Public License version 3.
 
 See [LICENSE](LICENSE) and
 [THIRD_PARTY_LICENSES](THIRD_PARTY_LICENSES).
+
+## Community & Support
+
+We welcome bug reports, feature suggestions, questions, and feedback.
+
+- **Report a bug:** [GitHub Issues](https://github.com/molitar/update-scanner-reborn/issues/new/choose)
+- **Request a feature:** [Feature Requests](https://github.com/molitar/update-scanner-reborn/issues/new/choose)
+- **Discuss ideas and ask questions:** [GitHub Discussions](https://github.com/molitar/update-scanner-reborn/discussions)
+- **Download releases:** [GitHub Releases](https://github.com/molitar/update-scanner-reborn/releases)
+- **Latest release:** [Update Scanner Reborn v5.0.0](https://github.com/molitar/update-scanner-reborn/releases/tag/v5.0.0)
+
+When reporting a bug, please include your Firefox version, the
+website being scanned (if appropriate), the selected scanning mode,
+steps to reproduce the issue, and screenshots where useful.
