@@ -1,0 +1,12 @@
+.DS_Store
+Thumbs.db
+*.pyc
+__pycache__/
+node_modules/
+.venv/
+*.xpi
+*.zip
+*.tmp
+*.bak
+release-backups/
+*.backup-*

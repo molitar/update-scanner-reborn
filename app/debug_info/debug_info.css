@@ -1,0 +1,26 @@
+body {
+  font: caption;
+  color: #222426;
+  display: block;
+  margin-left: 2em;
+  margin-right: 2em;
+}
+
+.html-heading {
+  display: inline-block;
+  margin-bottom: 0;
+}
+
+pre {
+  background-color: lightgrey;
+  padding: 1em;
+}
+
+.html {
+  height: 20em;
+  overflow: scroll;
+}
+
+.hidden {
+  display: none;
+}

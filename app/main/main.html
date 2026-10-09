@@ -1,0 +1,165 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+  <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+  <title>Update Scanner</title>
+  <link rel="stylesheet" href="chrome://browser/content/extension.css">
+  <link rel="stylesheet" href="main.css">
+  <link rel="stylesheet" href="jstree_theme/style.css">
+</head>
+
+<body>
+  <div id="content">
+    <div id="header">
+      <div id="icon"></div>
+
+      <div>
+        <div>
+          <h1><a id="title"></a></h1>
+        </div>
+        <div id="subtitle"><span id="highlight"></span></div>
+      </div>
+
+      <div id="header-right">
+        <div id="menu-container">
+          <button id="menuButton" class="browser-style"></button>
+          <ul id="menu" class="menu-content hidden">
+            <li id="debug-info">Debug Info</li>
+            <li id="page-settings">Page Settings</li>
+          </ul>
+        </div>
+        <div>
+          <select id="view-dropdown">
+            <option value="old">View Old Page</option>
+            <option value="new">View New Page</option>
+            <option value="diff">View Changes</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div id="frameContainer"></div>
+  </div>
+
+  <dialog id="settings-dialog">
+    <form id="settings-form" method="dialog">
+      <h1 id="global-heading" class="hidden">Global Settings</h1>
+      <h1 id="page-heading">Page Settings</h1>
+      <h1 id="folder-heading">Folder Settings</h1>
+      <fieldset id="titleFieldset">
+        <label>
+          <span>Title:</span>
+          <input name="title" type="text"/>
+        </label>
+      </fieldset>
+
+      <fieldset id="urlFieldset">
+        <label>
+          <span>URL:</span>
+          <input name="url" type="text"
+                 placeholder="https://www.example.com"/>
+        </label>
+      </fieldset>
+
+      <fieldset id="autoscanFieldset">
+        <legend>Autoscan:</legend>
+        <div class="slider">
+          <span class="range-label-min">Often</span>
+          <input name="autoscan" type="range"/>
+          <span class="range-label-max">Never</span>
+        </div>
+        <output name="autoscan-description" for="autoscan">...</output>
+      </fieldset>
+
+      <fieldset id="thresholdFieldset">
+        <legend>Change Threshold:</legend>
+        <div class="slider">
+          <span class="range-label-min">Low</span>
+          <input name="threshold" type="range"/>
+          <span class="range-label-max">High</span>
+        </div>
+        <output name="threshold-description" for="autoscan">...</output>
+        <output name="threshold-subdescription" for="autoscan">(...)</output>
+        <div>
+          <input type="checkbox" id="ignore-numbers" name="ignore-numbers">
+          <label for="ignore-numbers" class="checkbox-label">Ignore changes to
+            numbers</label>
+        </div>
+      </fieldset>
+
+      <fieldset id="scanModeFieldset">
+        <label for="scan-mode">Scan mode:</label>
+        <select id="scan-mode" name="scan-mode">
+          <option value="standard">Standard</option>
+          <option value="dynamic">Dynamic</option>
+          <option value="popup">Popup</option>
+        </select>
+        <output name="scan-mode-description"></output>
+      </fieldset>
+
+      <fieldset id="notificationFieldset">
+        <legend>Notifications:</legend>
+
+        <div>
+          <input type="checkbox" id="show-notification" name="show-notification">
+          <label for="show-notification" class="checkbox-label">Show notification</label>
+        </div>
+
+        <div id="notificationDurationRow">
+          <label for="notification-duration">Duration:</label>
+          <input id="notification-duration" name="notification-duration" type="range" min="1" max="16" step="1">
+          <output name="notification-duration-description" for="notification-duration"></output>
+        </div>
+
+        <div>
+          <input type="checkbox" id="play-notification-sound" name="play-notification-sound">
+          <label for="play-notification-sound" class="checkbox-label">Play audio</label>
+        </div>
+
+        <div>
+          <label for="notification-sound-type">Sound:</label>
+          <select id="notification-sound-type" name="notification-sound-type">
+            <option value="default">Default beep</option>
+            <option value="custom">Custom sound</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="notification-sound-file">Custom sound:</label>
+          <input id="notification-sound-file" name="notification-sound-file" type="file" accept=".mp3,.wav,audio/mpeg,audio/wav,audio/x-wav">
+          <output name="notification-sound-name"></output>
+        </div>
+      </fieldset>
+
+      
+      <fieldset id="bulkSettingsFieldset" class="hidden">
+        <p id="bulk-settings-description"></p>
+        <div>
+          <input type="checkbox" id="apply-descendants" name="apply-descendants">
+          <label id="apply-descendants-label" for="apply-descendants" class="checkbox-label">Apply to all links</label>
+        </div>
+        <div>
+          <input type="checkbox" id="apply-scan-mode" name="apply-scan-mode">
+          <label for="apply-scan-mode" class="checkbox-label">Apply scan mode (recheck automatic mode selection)</label>
+        </div>
+        <div>
+          <input type="checkbox" id="apply-notifications" name="apply-notifications" checked>
+          <label for="apply-notifications" class="checkbox-label">Apply notification and audio settings</label>
+        </div>
+      </fieldset>
+      <fieldset id="scanOptions">
+      </fieldset>
+
+      <div id="dialog-buttons">
+        <button class="browser-style" id="cancel-button" type="reset">Cancel
+        </button>
+        <button class="browser-style default" type="submit" value="ok">Ok
+        </button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="main_script.js" type="module"></script>
+
+</body>
+</html>

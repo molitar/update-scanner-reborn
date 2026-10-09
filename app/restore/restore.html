@@ -1,0 +1,32 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+  <title>Update Scanner - Restore Pages</title>
+  <link rel="stylesheet" href="chrome://browser/content/extension.css">
+  <link rel="stylesheet" href="restore.css">
+</head>
+
+<body>
+  <div>
+    <div id="uploading" class="message">
+      <button id="upload-button">Select Backup File</button>
+    </div>
+    <div id="restoring" class="message hidden">
+      <img id="img-loading" src="/images/loading.svg"/>
+      Restoring pages, please wait...
+    </div>
+    <div id="restore-failed" class="message hidden">
+      <div id="img-failed" class="image"></div>
+      Failed to restore pages.
+    </div>
+    <div id="restore-complete" class="message hidden">
+      <div id="img-complete" class="image"></div>
+      Your pages have been restored successfully.
+    </div>
+  </div>
+
+  <script src="restore_script.js" type="module"></script>
+
+</body>
+</html>

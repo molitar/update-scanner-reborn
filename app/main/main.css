@@ -1,0 +1,349 @@
+html, body, #content {
+  height: 100%;
+}
+
+#content {
+  overflow-y: hidden;
+  display: grid;
+  grid-template-rows: auto 1fr;
+}
+
+#header {
+  display: grid;
+  grid-template-columns: auto minmax(30em, 1fr) auto;
+  padding: 1em;
+  border-bottom: #d7d7db solid 1px;
+  background-color: #f9f9fa;
+}
+
+#icon {
+  height: 48px;
+  width: 48px;
+  margin-top: 3px;
+  margin-right: 15px;
+  background-image: url('/images/updatescanner_48.png');
+  background-position: center center;
+  background-repeat: no-repeat;
+}
+
+h1 {
+  font-size: x-large;
+  font-weight: normal;
+  color: #4040b0;
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+#subtitle {
+  color: #595959;
+}
+
+#menu-container {
+  float: right;
+  position: relative;
+  vertical-align: top;
+}
+
+#menuButton {
+  height: 24px;
+  width: 24px;
+  margin: 0px;
+  background-image: url('/images/preferences-16-macos.svg');
+  background-position: center center;
+  background-repeat: no-repeat;
+  border: none;
+}
+
+/* Menu content, hidden by default */
+.menu-content {
+  position: absolute;
+  padding: inherit;
+  width: 164px;
+  margin-left: -140px;
+  margin-top: 2px;
+  background-color: #ffffff;
+  box-shadow: 0px 4px 16px rgba(12, 12, 13, 0.1);
+  z-index: 1;
+}
+
+.menu-content li {
+  padding: 5px 15px;
+  display: block;
+}
+
+.menu-content li:hover {
+  background-color: rgba(12, 12, 13, 0.1);
+}
+
+#view-dropdown {
+  margin-top: 5px;
+}
+
+
+.frame {
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+dialog {
+  padding: 1em;
+  width: 32em;
+  border: 1px solid #d7d7db;
+  border-radius: 6px;
+  box-shadow: 0 4px 16px rgba(12, 12, 13, 0.1);
+}
+
+dialog::backdrop { /* native */
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+dialog + .backdrop { /* polyfill */
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+form h1 {
+  margin-bottom: 1em;
+  margin-left: 0.2em;
+}
+
+fieldset {
+  border: none;
+  margin-left: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+fieldset div {
+  margin-top: 0.5em;
+  margin-left: 1em;
+}
+
+.slider {
+  padding-left: 0.5em;
+  display: flex;
+}
+
+.selectors-description {
+  margin-top: 8px;
+}
+
+#selectors::placeholder {
+  font-size: smaller;
+}
+
+legend {
+  font-size: larger;
+}
+
+label {
+  display: flex;
+  margin-bottom: 12px;
+  font-size: larger;
+}
+
+label span {
+  display: inline-block;
+  min-width: 2.5em;
+  text-align: right;
+  margin-right: 6px;
+}
+
+.checkbox-label {
+  display: inline-block;
+  font-size: inherit;
+  vertical-align: top;
+}
+
+input {
+  flex-grow: 1;
+}
+
+select {
+  width: 100%;
+}
+
+.range-label-min {
+  display: inline-block;
+  margin-top: 3px;
+  text-align: right;
+  font-size: smaller;
+}
+
+.range-label-max {
+  margin-top: 3px;
+  font-size: smaller;
+}
+
+output {
+  display: block;
+  text-align: center;
+  font-size: smaller;
+  min-height: 1.5em;
+}
+
+#dialog-buttons {
+  float: right;
+  margin-right: 0.5em;
+}
+
+form button.browser-style {
+  min-width: 5em;
+  text-align: center;
+}
+
+.hidden {
+  display: none;
+}
+
+.disabled {
+  opacity: 0.5;
+}
+
+/* Compact responsive Page Settings layout */
+#settings-dialog {
+  width: 44em;
+  max-width: calc(100vw - 3em);
+  max-height: calc(100vh - 3em);
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+#settings-form fieldset {
+  margin-bottom: 0.3em;
+}
+
+#settings-form fieldset div {
+  margin-top: 0.3em;
+}
+
+#settings-form label {
+  margin-bottom: 6px;
+}
+
+/* Scan mode: label/select on one row, description below */
+#scanModeFieldset {
+  display: grid;
+  grid-template-columns: auto minmax(16em, 1fr);
+  column-gap: 0.75em;
+  align-items: center;
+}
+
+#scanModeFieldset > label {
+  margin: 0;
+}
+
+#scanModeFieldset > output {
+  grid-column: 1 / -1;
+  margin-top: 0.15em;
+}
+
+/* Notifications: two compact columns */
+#notificationFieldset {
+  display: grid;
+  grid-template-columns: minmax(12em, 0.8fr) minmax(20em, 1.2fr);
+  column-gap: 1.25em;
+  row-gap: 0.35em;
+  align-items: center;
+}
+
+#notificationFieldset > div {
+  margin: 0;
+}
+
+#notificationFieldset > div:nth-of-type(1) {
+  grid-column: 1;
+}
+
+#notificationFieldset > div:nth-of-type(2) {
+  grid-column: 2;
+}
+
+#notificationFieldset > div:nth-of-type(3) {
+  grid-column: 1;
+}
+
+#notificationFieldset > div:nth-of-type(4) {
+  grid-column: 2;
+}
+
+#notificationFieldset > div:nth-of-type(5) {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: auto minmax(15em, 1fr);
+  column-gap: 0.75em;
+  align-items: center;
+}
+
+#notificationDurationRow {
+  display: grid;
+  grid-template-columns: auto minmax(10em, 1fr);
+  column-gap: 0.6em;
+  align-items: center;
+}
+
+#notificationDurationRow > label {
+  margin: 0;
+}
+
+#notificationDurationRow > output {
+  grid-column: 1 / -1;
+  margin-top: 0.1em;
+}
+
+#notificationFieldset > div:nth-of-type(4) {
+  display: grid;
+  grid-template-columns: auto minmax(12em, 1fr);
+  column-gap: 0.6em;
+  align-items: center;
+}
+
+#notificationFieldset > div:nth-of-type(4) > label,
+#notificationFieldset > div:nth-of-type(5) > label {
+  margin: 0;
+}
+
+#notificationFieldset > div:nth-of-type(5) > output {
+  grid-column: 1 / -1;
+  margin-top: 0.1em;
+}
+
+/* Collapse neatly on smaller windows */
+@media (max-width: 720px) {
+  #settings-dialog {
+    width: calc(100vw - 2em);
+    max-width: calc(100vw - 2em);
+  }
+
+  #scanModeFieldset,
+  #notificationFieldset {
+    grid-template-columns: 1fr;
+  }
+
+  #scanModeFieldset > *,
+  #notificationFieldset > div:nth-of-type(1),
+  #notificationFieldset > div:nth-of-type(2),
+  #notificationFieldset > div:nth-of-type(3),
+  #notificationFieldset > div:nth-of-type(4),
+  #notificationFieldset > div:nth-of-type(5) {
+    grid-column: 1;
+  }
+}

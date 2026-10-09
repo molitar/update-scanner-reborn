@@ -1,0 +1,61 @@
+{
+  "manifest_version": 2,
+  "name": "Update Scanner Reborn",
+  "short_name": "Updatescan",
+  "version": "5.0.0",
+  "description": "Monitor website changes with intelligent scanning, JavaScript rendering, improved snapshots, visual highlighting, and configurable notifications.",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "update-scanner-reborn@strix.local",
+      "strict_min_version": "140.0",
+      "data_collection_permissions": {
+        "required": [
+          "none"
+        ]
+      }
+    }
+  },
+  "icons": {
+    "48": "images/updatescanner_48.png",
+    "96": "images/updatescanner_96.png"
+  },
+  "permissions": [
+    "<all_urls>",
+    "alarms",
+    "notifications",
+    "storage",
+    "tabs",
+    "unlimitedStorage",
+    "*://twitter.com/*",
+    "*://www.facebook.com/*"
+  ],
+  "background": {
+    "page": "app/background/background.html"
+  },
+  "browser_action": {
+    "default_title": "Update Scanner",
+    "browser_style": true,
+    "default_popup": "app/popup/popup.html",
+    "default_icon": {
+      "18": "images/updatescanner_18.png",
+      "48": "images/updatescanner_48.png",
+      "64": "images/updatescanner_64.png"
+    }
+  },
+  "sidebar_action": {
+    "default_title": "Update Scanner",
+    "default_panel": "app/sidebar/sidebar.html",
+    "default_icon": {
+      "18": "images/updatescanner_18.png",
+      "48": "images/updatescanner_48.png",
+      "64": "images/updatescanner_64.png"
+    }
+  },
+  "commands": {
+    "_execute_sidebar_action": {
+      "suggested_key": {
+        "default": "Alt+U"
+      }
+    }
+  }
+}
