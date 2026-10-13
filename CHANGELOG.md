@@ -1,12 +1,14 @@
 # Changelog
 
-## 5.1.0 - 2026-10-13
-
-Everything added since 5.0.0.
+## 5.1.1 - 2026-10-13
 
 ### Fixed
 
 - **Folder Settings now has the Autoscan interval**, like Global Settings. Links added to the folder start with that interval, and "Apply Autoscan interval to existing links" (together with "Apply to all existing links") pushes it to links already in the folder.
+
+## 5.1.0 - 2026-10-13
+
+Everything added since 5.0.0.
 
 ### New: backups that survive a reinstall
 
