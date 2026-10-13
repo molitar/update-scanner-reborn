@@ -290,7 +290,7 @@ if [ "$RESUME" = "0" ]; then
 fi
 
 say "Creating the GitHub release"
-RELEASE_ARGS=(--title "Update Scanner Reborn $TAG" --notes-file "$(native_path "$NOTES")")
+RELEASE_ARGS=(--title "$TAG" --notes-file "$(native_path "$NOTES")")
 [ "$PRERELEASE" = "1" ] && RELEASE_ARGS+=(--prerelease)
 gh_cmd release create "$TAG" "$(native_path "$XPI")" "${RELEASE_ARGS[@]}" \
   || die "the release could not be created. The code and tag are already pushed: run the same command again to retry only the release."

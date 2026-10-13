@@ -1,5 +1,14 @@
 # Changelog
 
+## 5.1.2 - 2026-10-13
+
+### New: sort your folders and links
+
+- **Global Settings** has a new **Sorting** section: tick *Sort all folders and links alphabetically (A to Z)* and press OK to sort the whole list in one go.
+- **Folder Settings** has the same option for a single folder: *Sort this folder and the folders inside it alphabetically (A to Z)*.
+- Sorting ignores upper/lower case and puts numbers in order (Video 2 comes before Video 10). *List folders before links* is on by default; untick it to mix folders and links together.
+- It only reorders; nothing is renamed or removed, and folders that are already in order are left untouched.
+
 ## 5.1.1 - 2026-10-13
 
 ### Fixed
