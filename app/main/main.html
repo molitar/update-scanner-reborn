@@ -85,6 +85,11 @@
           <label for="ignore-numbers" class="checkbox-label">Ignore changes to
             numbers</label>
         </div>
+        <div id="change-size-info" class="hidden">
+          <p id="change-size-text"></p>
+          <button type="button" id="use-suggested-threshold"
+                  class="browser-style hidden"></button>
+        </div>
       </fieldset>
 
       <fieldset id="scanModeFieldset">
@@ -134,9 +139,17 @@
       
       <fieldset id="bulkSettingsFieldset" class="hidden">
         <p id="bulk-settings-description"></p>
-        <div>
+        <div id="apply-descendants-row">
           <input type="checkbox" id="apply-descendants" name="apply-descendants">
           <label id="apply-descendants-label" for="apply-descendants" class="checkbox-label">Apply to all links</label>
+        </div>
+        <div id="apply-autoscan-row" class="hidden">
+          <input type="checkbox" id="apply-autoscan" name="apply-autoscan">
+          <label for="apply-autoscan" class="checkbox-label">Apply Autoscan interval to existing links</label>
+        </div>
+        <div>
+          <input type="checkbox" id="apply-detection" name="apply-detection">
+          <label for="apply-detection" class="checkbox-label">Apply change threshold and number handling</label>
         </div>
         <div>
           <input type="checkbox" id="apply-scan-mode" name="apply-scan-mode">
@@ -145,6 +158,10 @@
         <div>
           <input type="checkbox" id="apply-notifications" name="apply-notifications" checked>
           <label for="apply-notifications" class="checkbox-label">Apply notification and audio settings</label>
+        </div>
+        <div id="global-defaults-notes" class="hidden">
+          <p><strong>Global defaults:</strong> Settings are saved as defaults for new websites. Existing websites remain unchanged unless you select an override.</p>
+          <p><strong>Override existing websites:</strong> Selecting an override applies that category of global settings to all existing websites, replacing their individual settings for that category. Leave it unchecked to preserve those settings.</p>
         </div>
       </fieldset>
       <fieldset id="scanOptions">

@@ -12,6 +12,18 @@ button {
   padding: 12px 24px;
 }
 
+/* Sits below the file choice, not 10em further down. */
+#bookmark-backups {
+  margin-top: 2em;
+}
+
+#bookmark-backup-list {
+  display: block;
+  margin: 0.5em auto 1em;
+  min-width: 24em;
+  padding: 6px;
+}
+
 /* Special case for loading spinner */
 img {
   vertical-align: middle;

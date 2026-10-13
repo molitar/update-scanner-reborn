@@ -47,6 +47,13 @@ a:hover {
   color: #595959;
 }
 
+/* "56 changed, 16 over the 40 threshold (?)": hover for the full explanation */
+#subtitle .change-size {
+  font-weight: bold;
+  text-decoration: underline dotted;
+  cursor: help;
+}
+
 #menu-container {
   float: right;
   position: relative;
