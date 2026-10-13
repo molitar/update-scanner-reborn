@@ -1,5 +1,12 @@
 # Update Scanner Reborn
 
+<p>
+  <a href="https://github.com/molitar/update-scanner-reborn/releases/latest"><img src="https://img.shields.io/github/v/release/molitar/update-scanner-reborn?label=release&color=blue" alt="Release"></a>
+  <a href="https://github.com/molitar/update-scanner-reborn/releases"><img src="https://img.shields.io/github/v/release/molitar/update-scanner-reborn?include_prereleases&label=preview&color=orange" alt="Preview"></a>
+  <a href="https://github.com/molitar/update-scanner-reborn/blob/main/LICENSE"><img src="https://img.shields.io/github/license/molitar/update-scanner-reborn?color=orange" alt="License"></a>
+  <a href="https://github.com/molitar/update-scanner-reborn/releases"><img src="https://img.shields.io/github/downloads/molitar/update-scanner-reborn/total?color=green" alt="Downloads"></a>
+</p>
+
 Modern website change monitoring for Firefox 140 and newer.
 
 Update Scanner Reborn is a modified continuation of the original
@@ -143,7 +150,7 @@ We welcome bug reports, feature suggestions, questions, and feedback.
 - **Request a feature:** [Feature Requests](https://github.com/molitar/update-scanner-reborn/issues/new/choose)
 - **Discuss ideas and ask questions:** [GitHub Discussions](https://github.com/molitar/update-scanner-reborn/discussions)
 - **Download releases:** [GitHub Releases](https://github.com/molitar/update-scanner-reborn/releases)
-- **Latest release:** [Update Scanner Reborn v5.1.0](https://github.com/molitar/update-scanner-reborn/releases/tag/v5.1.0)
+- **Latest release:** [Update Scanner Reborn v5.1.1](https://github.com/molitar/update-scanner-reborn/releases/tag/v5.1.1)
 
 When reporting a bug, please include your Firefox version, the
 website being scanned (if appropriate), the selected scanning mode,
