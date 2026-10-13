@@ -4,6 +4,10 @@
 
 Everything added since 5.0.0.
 
+### Fixed
+
+- **Folder Settings now has the Autoscan interval**, like Global Settings. Links added to the folder start with that interval, and "Apply Autoscan interval to existing links" (together with "Apply to all existing links") pushes it to links already in the folder.
+
 ### New: backups that survive a reinstall
 
 - Your pages are copied automatically into your bookmarks, in an

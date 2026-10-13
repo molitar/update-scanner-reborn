@@ -8,7 +8,7 @@
 # release-notes/). The version comes from manifest.json, so bump that first.
 #
 # What it does, in order:
-#   1. Checks everything is in order (branch, GitHub login, version not tagged yet,
+#   1. Checks everything is in order (branch, GitHub login, version not released yet,
 #      notes mention the version, nothing newer on GitHub).
 #   2. Builds update_scanner_reborn-<version>.xpi from the extension files.
 #   3. Adds the notes to release-notes/ and CHANGELOG.md.
@@ -16,9 +16,15 @@
 #   5. Commits everything, tags v<version>, pushes, and creates the GitHub release
 #      with the xpi attached and the notes as its description.
 #
+# If a previous run pushed the code and the tag but could not create the release,
+# running the same command again only creates the release (nothing is pushed twice).
+#
 # --prerelease  marks the GitHub release as a pre-release (for example while the
 #               xpi is unsigned and waiting for Mozilla). tools/promote-release.sh
 #               turns it into the normal release once the signed xpi is attached.
+# --replace     redo a version that is already released (for example a fix made before
+#               Mozilla signed it): commits the changes, moves the tag, deletes the
+#               GitHub release and creates it again with the new xpi.
 # --dry-run     does steps 1, 2 and the summary only: nothing is committed or pushed.
 #
 # Set XPI_OUT_DIR to change where the xpi is written (default ~/update-scanner-builds).
@@ -38,6 +44,8 @@ NOTES_ARG=""
 ASSUME_YES=0
 DRY_RUN=0
 PRERELEASE=0
+REPLACE=0
+REPLACING=0
 
 die() { echo "ERROR: $*" >&2; exit 1; }
 say() { echo "==> $*"; }
@@ -47,7 +55,8 @@ for arg in "$@"; do
     --yes|-y) ASSUME_YES=1 ;;
     --dry-run|-n) DRY_RUN=1 ;;
     --prerelease|-p) PRERELEASE=1 ;;
-    -h|--help) sed -n '2,29p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+    --replace) REPLACE=1 ;;
+    -h|--help) sed -n '2,32p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
     -*) die "unknown option: $arg" ;;
     *) [ -z "$NOTES_ARG" ] || die "only one notes file, got a second: $arg"; NOTES_ARG="$arg" ;;
   esac
@@ -73,6 +82,21 @@ native_path() {
 }
 git_remote() { git ${GIT_AUTH[@]+"${GIT_AUTH[@]}"} "$@"; }
 
+# Name the GitHub repository explicitly (owner/name), so the GitHub CLI never has to
+# inspect this folder itself (the Windows CLI cannot safely do that from WSL).
+repo_slug() {
+  local url
+  url="$(git config --get "remote.$REMOTE.url" 2>/dev/null || true)"
+  case "$url" in
+    https://github.com/*|git@github.com:*)
+      url="${url#https://github.com/}"; url="${url#git@github.com:}"; printf '%s' "${url%.git}" ;;
+  esac
+}
+REPO_SLUG="${REPO_SLUG:-$(repo_slug)}"
+GH_REPO=()
+[ -z "$REPO_SLUG" ] || GH_REPO=(--repo "$REPO_SLUG")
+gh_cmd() { "$GH" "$@" ${GH_REPO[@]+"${GH_REPO[@]}"}; }
+
 NOTES=""
 for candidate in "$NOTES_ARG" "release-notes/$NOTES_ARG" "$REPO/$NOTES_ARG"; do
   if [ -f "$candidate" ]; then NOTES="$(cd "$(dirname "$candidate")" && pwd)/$(basename "$candidate")"; break; fi
@@ -93,10 +117,23 @@ say "Checking GitHub"
 git_remote fetch --quiet "$REMOTE" "$BRANCH" --tags || die "could not reach $REMOTE"
 BEHIND="$(git rev-list --count "HEAD..$REMOTE/$BRANCH")"
 [ "$BEHIND" = "0" ] || die "GitHub has $BEHIND newer commit(s) than this copy. Pull them first (git pull --rebase)."
-git rev-parse -q --verify "refs/tags/$TAG" >/dev/null && die "tag $TAG already exists. Bump the version in manifest.json."
-[ -z "$(git_remote ls-remote --tags "$REMOTE" "refs/tags/$TAG")" ] || die "tag $TAG already exists on GitHub. Bump the version in manifest.json."
-if [ "$DRY_RUN" = "0" ]; then
+
+RESUME=0
+TAG_EXISTS=0
+git rev-parse -q --verify "refs/tags/$TAG" >/dev/null && TAG_EXISTS=1
+[ "$TAG_EXISTS" = "1" ] || [ -z "$(git_remote ls-remote --tags "$REMOTE" "refs/tags/$TAG")" ] || TAG_EXISTS=1
+if [ "$DRY_RUN" = "0" ] || [ "$TAG_EXISTS" = "1" ]; then
   "$GH" auth status >/dev/null 2>&1 || die "not logged in to GitHub. Run:  $GH auth login"
+fi
+if [ "$TAG_EXISTS" = "1" ]; then
+  if gh_cmd release view "$TAG" >/dev/null 2>&1; then
+    [ "$REPLACE" = "1" ] || die "$TAG is already released on GitHub. Bump the version in manifest.json (or use --replace to redo this exact version)."
+    REPLACING=1
+    say "REPLACE: $TAG is already released; the tag will be moved to the new commit and the release recreated with the new xpi"
+  else
+    RESUME=1
+    say "Tag $TAG is already pushed but has no GitHub release yet: only the release will be created"
+  fi
 fi
 
 # ------------------------------------------------------------------ 2. xpi
@@ -106,6 +143,7 @@ XPI_FILE_COUNT="$(python3 - "$REPO" "$XPI" "$VERSION" <<'PY'
 import json
 import os
 import sys
+import time
 import zipfile
 
 repo, out, version = sys.argv[1:4]
@@ -125,8 +163,6 @@ for directory in INCLUDE_DIRS:
             if file in SKIP_NAMES or file.endswith(SKIP_SUFFIXES):
                 continue
             names.append(os.path.relpath(os.path.join(root, file), repo).replace(os.sep, "/"))
-
-import time
 
 # A zip cannot store a time before 1980, and some files carry older times (copies
 # made with the original file dates), so clamp each file's time to 1980-01-01.
@@ -163,7 +199,7 @@ echo "    $XPI ($XPI_FILE_COUNT files, $(du -h "$XPI" | cut -f1))"
 # ---------------------------------------------------- 3. notes and changelog
 NOTES_IN_REPO="release-notes/$(basename "$NOTES")"
 PLAN_NOTES="would copy the notes to $NOTES_IN_REPO and add them to CHANGELOG.md"
-if [ "$DRY_RUN" = "0" ]; then
+if [ "$DRY_RUN" = "0" ] && [ "$RESUME" = "0" ]; then
   mkdir -p release-notes
   [ "$NOTES" = "$REPO/$NOTES_IN_REPO" ] || cp "$NOTES" "$NOTES_IN_REPO"
   python3 - "$NOTES_IN_REPO" "$VERSION" <<'PY'
@@ -193,7 +229,7 @@ fi
 
 # --------------------------------------------------------------- 4. summary
 say "Summary"
-if [ "$DRY_RUN" = "0" ]; then
+if [ "$DRY_RUN" = "0" ] && [ "$RESUME" = "0" ]; then
   # Make line endings consistent so the commit shows real changes only.
   # Third-party license texts are kept exactly as they were published.
   if ! grep -qs 'eol=lf' .gitattributes 2>/dev/null; then
@@ -206,17 +242,21 @@ KIND="release"; [ "$PRERELEASE" = "1" ] && KIND="PRE-RELEASE"
 echo "    version:   $VERSION   (tag $TAG on branch $BRANCH)   type: $KIND"
 echo "    xpi:       $(basename "$XPI")"
 echo "    notes:     $(basename "$NOTES") ($(wc -l < "$NOTES") lines) - first line: $(head -n 1 "$NOTES")"
-echo "    changes:"
-if [ "$DRY_RUN" = "0" ]; then
-  git status --short | sed 's/^/        /'
-  echo "    $(git diff --cached --shortstat)"
+if [ "$RESUME" = "1" ]; then
+  echo "    resuming:  the code and tag $TAG are already on GitHub; only the release will be created"
 else
-  git status --short | sed 's/^/        /'
-  echo "        ($PLAN_NOTES)"
+  echo "    changes:"
+  if [ "$DRY_RUN" = "0" ]; then
+    git status --short | sed 's/^/        /'
+    echo "    $(git diff --cached --shortstat)"
+  else
+    git status --short | sed 's/^/        /'
+    echo "        ($PLAN_NOTES)"
+  fi
 fi
 
 if [ "$DRY_RUN" = "1" ]; then
-  say "Dry run: nothing was committed, tagged or pushed."
+  say "Dry run: nothing was committed, tagged, pushed or released."
   exit 0
 fi
 
@@ -227,19 +267,33 @@ if [ "$ASSUME_YES" = "0" ]; then
 fi
 
 # --------------------------------------------- 5. commit, tag, push, release
-say "Committing"
-git commit --quiet -m "Release $VERSION" -m "$(head -n 1 "$NOTES" | sed 's/^#* *//')"
-git tag -a "$TAG" -m "Update Scanner Reborn $TAG"
+if [ "$RESUME" = "0" ]; then
+  say "Committing"
+  if [ "$REPLACING" = "1" ]; then
+    git diff --cached --quiet && die "nothing has changed since $TAG was published, so there is nothing to replace."
+    git commit --quiet -m "Update $VERSION: changes made before it was signed" -m "$(head -n 1 "$NOTES" | sed 's/^#* *//')"
+    git tag -f -a "$TAG" -m "Update Scanner Reborn $TAG" >/dev/null
+  else
+    git commit --quiet -m "Release $VERSION" -m "$(head -n 1 "$NOTES" | sed 's/^#* *//')"
+    git tag -a "$TAG" -m "Update Scanner Reborn $TAG"
+  fi
 
-say "Pushing"
-git_remote push "$REMOTE" "$BRANCH" || die "push failed. Your commit and tag are saved locally; fix the problem and run:  git push $REMOTE $BRANCH $TAG"
-git_remote push "$REMOTE" "$TAG"
+  say "Pushing"
+  git_remote push "$REMOTE" "$BRANCH" || die "push failed. Your commit and tag are saved locally; fix the problem and run this command again."
+  if [ "$REPLACING" = "1" ]; then
+    git_remote push --force "$REMOTE" "$TAG"
+    say "Removing the old GitHub release $TAG"
+    gh_cmd release delete "$TAG" --yes || die "could not delete the old release. The code and the moved tag are pushed: run the same command again."
+  else
+    git_remote push "$REMOTE" "$TAG"
+  fi
+fi
 
 say "Creating the GitHub release"
 RELEASE_ARGS=(--title "Update Scanner Reborn $TAG" --notes-file "$(native_path "$NOTES")")
 [ "$PRERELEASE" = "1" ] && RELEASE_ARGS+=(--prerelease)
-"$GH" release create "$TAG" "$(native_path "$XPI")" "${RELEASE_ARGS[@]}" \
-  || die "the release could not be created. The code and tag are pushed; create it on the Releases page and attach: $XPI"
+gh_cmd release create "$TAG" "$(native_path "$XPI")" "${RELEASE_ARGS[@]}" \
+  || die "the release could not be created. The code and tag are already pushed: run the same command again to retry only the release."
 
 say "Done."
-"$GH" release view "$TAG" --json url --jq .url
+gh_cmd release view "$TAG" --json url --jq .url

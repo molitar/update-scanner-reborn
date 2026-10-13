@@ -2,7 +2,7 @@
 # Publish Update Scanner Reborn from your PC (WSL), so the server never talks to GitHub.
 #
 # Usage (from WSL):
-#   publish.sh NOTES.md [--prerelease] [--yes] [--dry-run] [--no-sync-back]
+#   publish.sh NOTES.md [--prerelease] [--replace] [--yes] [--dry-run] [--no-sync-back]
 #
 # The editing happens on the server (strix), as before: bump the version in
 # manifest.json and write release-notes/<version>.md there. This script then:
@@ -102,6 +102,11 @@ if [ "$SYNC_BACK" = "1" ]; then
   say "Updating the server's copy (its .git is backed up first)"
   STAMP="$(date +%Y%m%d-%H%M%S)"
   on_strix "cp -a '$STRIX_PATH/.git' '$STRIX_PATH.git.backup-$STAMP'" || die "could not back up the server's .git; it was NOT changed"
+  # Files that are in the published commit but not on the server (for example
+  # .gitattributes, which the first publish creates) were removed from the clone by the
+  # copy above; put them back so the server gets them too.
+  MISSING="$(git -C "$CLONE" ls-files -d)"
+  [ -z "$MISSING" ] || git -C "$CLONE" checkout -- $MISSING
   rsync -a --checksum --delete "$CLONE/.git/" "$(strix_url)/.git/"
   rsync -a --checksum --exclude='/.git/' "$CLONE/" "$(strix_url)/"
   echo "    backup: $STRIX_PATH.git.backup-$STAMP"
