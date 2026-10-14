@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "Update Scanner Reborn",
   "short_name": "Updatescan",
-  "version": "5.1.2",
+  "version": "5.1.4",
   "description": "Monitor website changes with intelligent scanning, JavaScript rendering, improved snapshots, visual highlighting, and configurable notifications.",
   "browser_specific_settings": {
     "gecko": {

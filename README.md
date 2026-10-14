@@ -13,15 +13,32 @@ Update Scanner browser extension.
 
 ### Intelligent scanning
 
-The extension automatically selects a suitable scanning mode:
+Choose **Automatic (recommended)** and the extension picks the lightest scan
+mode that captures the page completely:
 
-- **Standard:** Fast HTML-based scanning.
-- **Dynamic:** Background-tab rendering for JavaScript-heavy pages.
-- **Popup:** Separate-window rendering when additional rendering is needed.
+- **Standard:** Fast HTML-based scanning. About 10 seconds the first time
+  (while it checks that the page is complete), about 2 seconds after that.
+- **Dynamic:** Background-tab rendering for JavaScript-heavy pages. Typically
+  about 15 seconds (two passes); a few sites that need a third or fourth pass
+  take longer.
+- **Popup:** Separate-window rendering when a page needs it, for example sites
+  that only paint their pictures in a visible window or show a "verify you are
+  human" check. About 30 seconds.
 
-The first scan may take longer while the extension verifies the
-appropriate scanning method. Verified settings are remembered
-for subsequent scans. Users can also choose a mode manually.
+Automatic works the mode out **once**, on the first scan, and then keeps it, so a
+site that is briefly down can never push a page up to a slower mode. The
+page header shows how a page was scanned ("last scanned today using dynamic at
+21:36").
+
+You can also choose a mode by hand. A hand-picked mode is the mode that is
+used. The **Lock** switch means the mode never changes for any reason and no
+other kind of scan is tried, even when scans fail. Choose Automatic again (or
+turn the lock off) to have the page checked again.
+
+Scans are quick but thorough: Dynamic and Popup sweep the page up to three
+times, a little slower each time, skip the third sweep when every image has
+already loaded, and only add a slower fourth sweep when pictures are still
+missing.
 
 ### Global and folder-level controls
 
@@ -68,7 +85,13 @@ for subsequent scans. Users can also choose a mode manually.
   counts as a single change however long it is written, rather than one change
   per character.
 - Folder-wide notification settings.
-- Folder-wide scanning-mode configuration.
+- Folder-wide scanning-mode configuration, with an optional lock.
+- Each "Apply to existing links" box sits right under the setting it covers, and
+  starts unticked.
+- Sort a folder, or everything, alphabetically in one go.
+- Settings open in their own tab beside the one you are on, and pages you click
+  open in the same tab inside Update Scanner or in a new tab next to a site you
+  are reading.
 - Individual website settings.
 
 ### Improved page monitoring
@@ -147,7 +170,7 @@ We welcome bug reports, feature suggestions, questions, and feedback.
 - **Request a feature:** [Feature Requests](https://github.com/molitar/update-scanner-reborn/issues/new/choose)
 - **Discuss ideas and ask questions:** [GitHub Discussions](https://github.com/molitar/update-scanner-reborn/discussions)
 - **Download releases:** [GitHub Releases](https://github.com/molitar/update-scanner-reborn/releases)
-- **Latest release:** [Update Scanner Reborn v5.1.1](https://github.com/molitar/update-scanner-reborn/releases/tag/v5.1.1)
+- **Latest release:** [Update Scanner Reborn v5.1.4](https://github.com/molitar/update-scanner-reborn/releases/tag/v5.1.4)
 
 When reporting a bug, please include your Firefox version, the
 website being scanned (if appropriate), the selected scanning mode,

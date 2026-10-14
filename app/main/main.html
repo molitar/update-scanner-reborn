@@ -46,6 +46,7 @@
       <h1 id="global-heading" class="hidden">Global Settings</h1>
       <h1 id="page-heading">Page Settings</h1>
       <h1 id="folder-heading">Folder Settings</h1>
+      <p id="bulk-intro" class="bulk-intro hidden"></p>
       <fieldset id="titleFieldset">
         <label>
           <span>Title:</span>
@@ -69,6 +70,10 @@
           <span class="range-label-max">Never</span>
         </div>
         <output name="autoscan-description" for="autoscan">...</output>
+        <div id="apply-autoscan-row" class="apply-row hidden">
+          <input type="checkbox" id="apply-autoscan" name="apply-autoscan">
+          <label for="apply-autoscan" class="checkbox-label">Apply to existing links</label>
+        </div>
       </fieldset>
 
       <fieldset id="thresholdFieldset">
@@ -85,6 +90,10 @@
           <label for="ignore-numbers" class="checkbox-label">Ignore changes to
             numbers</label>
         </div>
+        <div id="apply-detection-row" class="apply-row hidden">
+          <input type="checkbox" id="apply-detection" name="apply-detection">
+          <label for="apply-detection" class="checkbox-label">Apply to existing links</label>
+        </div>
         <div id="change-size-info" class="hidden">
           <p id="change-size-text"></p>
           <button type="button" id="use-suggested-threshold"
@@ -95,11 +104,28 @@
       <fieldset id="scanModeFieldset">
         <label for="scan-mode">Scan mode:</label>
         <select id="scan-mode" name="scan-mode">
+          <option value="auto">Automatic (recommended)</option>
           <option value="standard">Standard</option>
           <option value="dynamic">Dynamic</option>
           <option value="popup">Popup</option>
         </select>
         <output name="scan-mode-description"></output>
+        <div id="scan-mode-lock-row" class="switch-row">
+          <label class="switch" for="scan-mode-locked">
+            <input type="checkbox" id="scan-mode-locked" name="scan-mode-locked" role="switch">
+            <span class="switch-track"></span>
+          </label>
+          <label for="scan-mode-locked" class="switch-text">Lock scan mode</label>
+        </div>
+        <p id="scan-mode-lock-help" class="field-help"></p>
+        <div id="scan-mode-recheck-row" class="apply-row hidden">
+          <input type="checkbox" id="scan-mode-recheck" name="scan-mode-recheck">
+          <label for="scan-mode-recheck" class="checkbox-label">Check again for the best scan mode on the next scan</label>
+        </div>
+        <div id="apply-scan-mode-row" class="apply-row hidden">
+          <input type="checkbox" id="apply-scan-mode" name="apply-scan-mode">
+          <label for="apply-scan-mode" class="checkbox-label">Apply to existing links</label>
+        </div>
       </fieldset>
 
       <fieldset id="notificationFieldset">
@@ -134,36 +160,13 @@
           <input id="notification-sound-file" name="notification-sound-file" type="file" accept=".mp3,.wav,audio/mpeg,audio/wav,audio/x-wav">
           <output name="notification-sound-name"></output>
         </div>
+        <div id="apply-notifications-row" class="apply-row hidden">
+          <input type="checkbox" id="apply-notifications" name="apply-notifications">
+          <label for="apply-notifications" class="checkbox-label">Apply to existing links</label>
+        </div>
       </fieldset>
 
-      
-      <fieldset id="bulkSettingsFieldset" class="hidden">
-        <p id="bulk-settings-description"></p>
-        <div id="apply-descendants-row">
-          <input type="checkbox" id="apply-descendants" name="apply-descendants">
-          <label id="apply-descendants-label" for="apply-descendants" class="checkbox-label">Apply to all links</label>
-        </div>
-        <div id="apply-autoscan-row" class="hidden">
-          <input type="checkbox" id="apply-autoscan" name="apply-autoscan">
-          <label for="apply-autoscan" class="checkbox-label">Apply Autoscan interval to existing links</label>
-        </div>
-        <div>
-          <input type="checkbox" id="apply-detection" name="apply-detection">
-          <label for="apply-detection" class="checkbox-label">Apply change threshold and number handling</label>
-        </div>
-        <div>
-          <input type="checkbox" id="apply-scan-mode" name="apply-scan-mode">
-          <label for="apply-scan-mode" class="checkbox-label">Apply scan mode (recheck automatic mode selection)</label>
-        </div>
-        <div>
-          <input type="checkbox" id="apply-notifications" name="apply-notifications" checked>
-          <label for="apply-notifications" class="checkbox-label">Apply notification and audio settings</label>
-        </div>
-        <div id="global-defaults-notes" class="hidden">
-          <p><strong>Global defaults:</strong> Settings are saved as defaults for new websites. Existing websites remain unchanged unless you select an override.</p>
-          <p><strong>Override existing websites:</strong> Selecting an override applies that category of global settings to all existing websites, replacing their individual settings for that category. Leave it unchecked to preserve those settings.</p>
-        </div>
-      </fieldset>
+
       <fieldset id="sortFieldset" class="hidden">
         <legend>Sorting:</legend>
         <div>
@@ -171,7 +174,7 @@
           <label id="sort-now-label" for="sort-now" class="checkbox-label">Sort alphabetically (A to Z)</label>
         </div>
         <div>
-          <input type="checkbox" id="sort-folders-first" name="sort-folders-first" checked>
+          <input type="checkbox" id="sort-folders-first" name="sort-folders-first">
           <label for="sort-folders-first" class="checkbox-label">List folders before links</label>
         </div>
       </fieldset>
