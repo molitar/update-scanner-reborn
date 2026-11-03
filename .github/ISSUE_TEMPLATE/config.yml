@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Ask a question
+    url: https://github.com/molitar/update-scanner-reborn/discussions/categories/q-a
+    about: Questions about using Update Scanner Reborn go in Discussions (Q&A).
+  - name: Request a feature or share an idea
+    url: https://github.com/molitar/update-scanner-reborn/discussions/categories/ideas
+    about: Feature requests and ideas go in Discussions (Ideas).
