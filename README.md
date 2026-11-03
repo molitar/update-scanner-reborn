@@ -9,6 +9,11 @@ Modern website change monitoring for Firefox 140 and newer.
 Update Scanner Reborn is a modified continuation of the original
 Update Scanner browser extension.
 
+**Documentation:** the [User Guide](https://github.com/molitar/update-scanner-reborn/wiki/User-Guide)
+explains everything step by step, and
+[Installing a Preview Build](https://github.com/molitar/update-scanner-reborn/wiki/Installing-a-Preview-Build)
+shows how to try a version before Mozilla has signed it.
+
 ## Features
 
 ### Intelligent scanning
@@ -151,7 +156,9 @@ way. To try one:
 
 Use **Backup** from the toolbar menu first, as with any new version. On Firefox
 Developer Edition or Nightly you can instead set `xpinstall.signatures.required`
-to `false` in `about:config` and install the file permanently.
+to `false` in `about:config` and install the file permanently. More detail is on
+the wiki page
+[Installing a Preview Build](https://github.com/molitar/update-scanner-reborn/wiki/Installing-a-Preview-Build).
 
 ## Compatibility
 
