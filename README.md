@@ -132,7 +132,7 @@ missing.
 
 Firefox Add-ons:
 
-https://addons.mozilla.org/en-US/firefox/addon/update-scanner-reborn-v5-0-0/
+https://addons.mozilla.org/en-US/firefox/addon/update-scanner-reborn/
 
 Availability depends on Mozilla approval.
 

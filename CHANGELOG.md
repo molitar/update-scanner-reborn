@@ -1,5 +1,15 @@
 # Changelog
 
+## 5.1.6 - 2026-11-03
+
+### New: jump from change to change
+
+- **Next / Previous buttons in the Changes view.** On a long page you no longer have to scroll to find what changed: press **Next** or **Previous** (under the view dropdown) and the page scrolls to the next highlighted change and flashes it with an orange outline. The counter shows where you are ("Change 3 of 12").
+- **One change, one stop.** Highlights that sit close together, such as the words of one edited sentence, count as a single change.
+- **Works from where you are.** If you scrolled by hand, Next goes to the first change below what you are reading and Previous to the one above. At the last change Next goes back to the first, and Previous from the first goes to the last.
+- **Keyboard:** press **N** for the next change and **P** for the previous one.
+- The buttons only appear in the Changes view when something is highlighted.
+
 ## 5.1.5 - 2026-11-03
 
 This release also contains everything from **5.1.2** and **5.1.4**, which were not published on their own (see below).

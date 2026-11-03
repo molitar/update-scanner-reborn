@@ -95,6 +95,29 @@ a:hover {
   margin-top: 5px;
 }
 
+/* Next / Previous change buttons of the Changes view */
+#change-nav {
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+#change-nav.hidden {
+  display: none;
+}
+
+#change-nav button {
+  margin: 0;
+}
+
+#change-count {
+  color: #595959;
+  min-width: 6.5em;
+  text-align: center;
+}
+
 
 .frame {
   width: 100%;
