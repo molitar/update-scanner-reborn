@@ -191,10 +191,10 @@ See [LICENSE](LICENSE) and
 We welcome bug reports, feature suggestions, questions, and feedback.
 
 - **Report a bug:** [GitHub Issues](https://github.com/molitar/update-scanner-reborn/issues/new/choose)
-- **Request a feature:** [Feature Requests](https://github.com/molitar/update-scanner-reborn/issues/new/choose)
-- **Discuss ideas and ask questions:** [GitHub Discussions](https://github.com/molitar/update-scanner-reborn/discussions)
+- **Ask a question:** [Discussions, Q&A](https://github.com/molitar/update-scanner-reborn/discussions/categories/q-a)
+- **Request a feature or share an idea:** [Discussions, Ideas](https://github.com/molitar/update-scanner-reborn/discussions/categories/ideas)
 - **Download releases:** [GitHub Releases](https://github.com/molitar/update-scanner-reborn/releases)
-- **Latest release:** [Update Scanner Reborn v5.1.4](https://github.com/molitar/update-scanner-reborn/releases/tag/v5.1.4)
+- **Latest release:** [Update Scanner Reborn, latest version](https://github.com/molitar/update-scanner-reborn/releases/latest)
 
 When reporting a bug, please include your Firefox version, the
 website being scanned (if appropriate), the selected scanning mode,
