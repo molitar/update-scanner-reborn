@@ -136,6 +136,23 @@ https://addons.mozilla.org/en-US/firefox/addon/update-scanner-reborn/
 
 Availability depends on Mozilla approval.
 
+### Trying a preview build
+
+Preview builds (marked **Pre-release** on the
+[Releases](https://github.com/molitar/update-scanner-reborn/releases) page) are
+not signed by Mozilla yet, so regular Firefox will not install them the normal
+way. To try one:
+
+1. Download the `.xpi` file from the release.
+2. In Firefox, open `about:debugging` and click **This Firefox**.
+3. Click **Load Temporary Add-on...** and choose the downloaded `.xpi`.
+4. The add-on stays loaded until Firefox is restarted, then it has to be loaded
+   again.
+
+Use **Backup** from the toolbar menu first, as with any new version. On Firefox
+Developer Edition or Nightly you can instead set `xpinstall.signatures.required`
+to `false` in `about:config` and install the file permanently.
+
 ## Compatibility
 
 - Firefox desktop 140 or newer.
