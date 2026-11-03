@@ -1,5 +1,14 @@
 # Changelog
 
+## 5.1.5 - 2026-11-03
+
+This release also contains everything from **5.1.2** and **5.1.4**, which were not published on their own (see below).
+
+### Changes
+
+- **Help opens the Update Scanner Reborn issues page** (github.com/molitar/update-scanner-reborn/issues) instead of the website of the original Update Scanner.
+- The toolbar popup now waits for a new tab to be created before it closes, so **Global Settings** and **New** always open their tab beside the current one.
+
 ## 5.1.4 - 2026-10-14
 
 ### Faster scans
