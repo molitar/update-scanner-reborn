@@ -2,7 +2,7 @@
 
 | Preview Builds | Release Builds | License | Downloads |
 |:---:|:---:|:---:|:---:|
-| [![Preview](https://img.shields.io/github/v/release/molitar/update-scanner-reborn?include_prereleases&label=preview&color=orange)](https://github.com/molitar/update-scanner-reborn/releases) | [![Download](https://img.shields.io/github/v/release/molitar/update-scanner-reborn?label=download&color=blue)](https://github.com/molitar/update-scanner-reborn/releases/latest) | [![License](https://img.shields.io/github/license/molitar/update-scanner-reborn?color=orange)](https://github.com/molitar/update-scanner-reborn/blob/main/LICENSE) | [![Downloads](https://img.shields.io/github/downloads/molitar/update-scanner-reborn/total?color=green)](https://github.com/molitar/update-scanner-reborn/releases) |
+| [![Preview](https://img.shields.io/github/v/release/molitar/update-scanner-reborn?include_prereleases&label=preview&color=orange&cacheSeconds=300)](https://github.com/molitar/update-scanner-reborn/releases) | [![Download](https://img.shields.io/github/v/release/molitar/update-scanner-reborn?label=download&color=blue&cacheSeconds=300)](https://github.com/molitar/update-scanner-reborn/releases/latest) | [![License](https://img.shields.io/github/license/molitar/update-scanner-reborn?color=orange)](https://github.com/molitar/update-scanner-reborn/blob/main/LICENSE) | [![Downloads](https://img.shields.io/github/downloads/molitar/update-scanner-reborn/total?color=green)](https://github.com/molitar/update-scanner-reborn/releases) |
 
 Modern website change monitoring for Firefox 140 and newer.
 
