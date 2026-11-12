@@ -49,3 +49,6 @@ dialog + .backdrop { /* polyfill */
 .hidden {
   display: none;
 }
+
+/* Confirmed outage: do not confuse it with the first gray scan failure. */
+.down > .jstree-anchor { color: #d93636 !important; font-weight: 600; }

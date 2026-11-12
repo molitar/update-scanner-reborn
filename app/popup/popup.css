@@ -125,3 +125,39 @@ p {
   background-color: rgba(12, 12, 13, 0.1);
 }
 
+
+#header-icons {
+  margin-left: auto;
+  display: flex;
+  gap: 4px;
+}
+
+.header-icon {
+  padding: 3px 5px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.header-icon:hover {
+  background: rgba(0, 0, 0, 0.12);
+  border-color: rgba(0, 0, 0, 0.25);
+}
+
+#popup-note {
+  padding: 6px 12px;
+  font-size: 12px;
+  background: #e8f4ff;
+  border-bottom: 1px solid #b9d9f5;
+}
+
+#popup-note.hidden {
+  display: none;
+}
+
+/* Red text in the toolbar popup only after confirmation recheck. */
+.panel-list-item.site-down > .text { color: #d93636 !important; font-weight: 600; }

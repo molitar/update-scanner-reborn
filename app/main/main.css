@@ -10,7 +10,7 @@ html, body, #content {
 
 #header {
   display: grid;
-  grid-template-columns: auto minmax(30em, 1fr) auto;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   padding: 1em;
   border-bottom: #d7d7db solid 1px;
   background-color: #f9f9fa;
@@ -93,11 +93,120 @@ a:hover {
 
 #view-dropdown {
   margin-top: 5px;
+  /* A fixed width: its text changes with every comparison, and the controls
+     below it must not move. */
+  width: 16em;
+  text-overflow: ellipsis;
+}
+
+/* One row under the view dropdown: Previous / count / Next, then Ignore parts */
+#header-actions {
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+/* The view selector and change-navigation belong to the right edge, not
+   wherever their changing contents happen to make the grid column end. */
+#header-right {
+  justify-self: end;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  min-width: 0;
+  max-width: 100%;
+}
+
+#header-right > div { max-width: 100%; }
+#view-dropdown { display: block; margin-left: 0; }
+
+/* The lower action row defines the right-hand column's natural width.
+   The View dropdown fills that same width, from the left edge of Previous
+   to the right edge of Select parts, irrespective of option text length. */
+#header-right { width: max-content; }
+#header-right > #menu-container + div { width: 100%; }
+#view-dropdown { width: 100%; box-sizing: border-box; min-width: 0; }
+
+#title-block { min-width: 0; }
+#change-nav { justify-content: flex-end; }
+
+
+/* The block-matching controls ("Tune blocks"): parked in the empty part of the
+   title area, at its bottom right next to the view controls, so they take no
+   room of their own. Hide puts them away once the setting is done. */
+#title-block {
+  position: relative;
+}
+
+#tune-bar {
+  position: absolute;
+  right: 14px;
+  bottom: -2px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 3px 10px;
+  background: #eef4fb;
+  border: 1px solid #c9d8ea;
+  border-radius: 8px;
+  white-space: nowrap;
+  z-index: 5;
+}
+
+#tune-bar.hidden {
+  display: none;
+}
+
+#tune-label {
+  font-weight: bold;
+}
+
+#tune-slider {
+  width: 11em;
+  margin: 0;
+}
+
+#tune-value {
+  min-width: 3em;
+  font-weight: bold;
+}
+
+#tune-bar button {
+  margin: 0;
+  min-width: 2.2em;
+  font-weight: bold;
+  color: #1a7f37;
+}
+
+#show-tune-bar {
+  margin-left: 0.6em;
+}
+
+#show-tune-bar.hidden {
+  display: none;
+}
+
+/* Only a really narrow window has no empty middle: the controls then take their
+   own small row under the scan line. */
+@media (max-width: 1150px) {
+  #tune-bar {
+    position: static;
+    margin-top: 6px;
+    width: fit-content;
+  }
+}
+
+#header-actions button {
+  margin: 0;
 }
 
 /* Next / Previous change buttons of the Changes view */
 #change-nav {
-  margin-top: 6px;
+  margin-top: 0;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -250,11 +359,139 @@ form button.browser-style {
 
 /* Compact responsive Page Settings layout */
 #settings-dialog {
-  width: 44em;
+  width: min(74em, calc(100vw - 3em));
   max-width: calc(100vw - 3em);
   max-height: calc(100vh - 3em);
   box-sizing: border-box;
   overflow-y: auto;
+  padding-bottom: 0;
+}
+
+/* The "Ignore parts" picker: a small floating window (dark, like the HIB card
+   settings) the user can drag, so the page underneath stays fully visible. */
+#pick-bar {
+  position: fixed;
+  right: 1.5em;
+  bottom: 1.5em;
+  width: 25em;
+  max-width: calc(100vw - 2em);
+  z-index: 1000;
+  box-sizing: border-box;
+  background: #16222f;
+  color: #f2f6fa;
+  border: 2px solid #00d5ff;
+  border-radius: 10px;
+  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.45);
+  font-size: 0.95em;
+  overflow: hidden;
+}
+
+#pick-handle {
+  padding: 0.45em 0.8em;
+  font-size: 1.05em;
+  font-weight: bold;
+  cursor: move;
+  user-select: none;
+  touch-action: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+#pick-handle span {
+  font-weight: normal;
+  font-size: smaller;
+  opacity: 0.7;
+}
+
+#pick-text {
+  padding: 0.6em 0.8em 0.3em;
+  max-height: 10em;
+  overflow-y: auto;
+  line-height: 1.4;
+}
+
+#pick-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.45em;
+  padding: 0.5em 0.8em;
+}
+
+#pick-buttons button {
+  min-width: 0;
+  background: #2b3d52;
+  color: #f2f6fa;
+  border: 1px solid #4a6580;
+  border-radius: 6px;
+  padding: 0.45em 0.4em;
+  font-weight: bold;
+}
+
+#pick-buttons button:hover:not(:disabled) {
+  background: #36506b;
+}
+
+#pick-buttons button.default {
+  background: #0a84d6;
+  border-color: #3aa0ea;
+}
+
+#pick-buttons button:disabled {
+  opacity: 0.4;
+}
+
+#pick-list {
+  padding: 0 0.8em 0.6em;
+  font-size: smaller;
+  opacity: 0.75;
+}
+
+#excluded-list {
+  margin: 0.2em 0;
+  padding-left: 1.2em;
+}
+
+#excluded-list li {
+  margin: 0.2em 0;
+}
+
+#excluded-list button {
+  margin-left: 0.5em;
+}
+
+#clear-excluded {
+  margin-top: 0.3em;
+}
+
+#clear-excluded.hidden {
+  display: none;
+}
+
+/* Two columns: page, address, how often and scan mode on the left; what counts
+   as a change on the right. Notifications run along the bottom. */
+#settings-columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  column-gap: 1.75em;
+  align-items: start;
+}
+
+.settings-col {
+  min-width: 0;
+}
+
+/* Ok / Cancel stay in view however tall the dialog is, so nobody has to scroll
+   down to save. */
+#settings-dialog #dialog-buttons {
+  position: sticky;
+  bottom: 0;
+  float: none;
+  clear: both;
+  margin: 0.5em 0 0;
+  padding: 0.6em 0.5em;
+  text-align: right;
+  background: Canvas;
+  border-top: 1px solid #d7d7db;
+  z-index: 2;
 }
 
 #settings-form fieldset {
@@ -357,6 +594,12 @@ form button.browser-style {
 }
 
 /* Collapse neatly on smaller windows */
+@media (max-width: 900px) {
+  #settings-columns {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 @media (max-width: 720px) {
   #settings-dialog {
     width: calc(100vw - 2em);
@@ -475,4 +718,158 @@ form button.browser-style {
 .apply-row {
   box-sizing: border-box;
   width: 100%;
+}
+
+
+#pick-mode {
+  display: flex;
+  gap: 0.4em;
+  margin: 0.4em 0;
+}
+
+#pick-mode button {
+  flex: 1;
+}
+
+#pick-mode button.default {
+  font-weight: bold;
+}
+
+
+.excluded-row {
+  border: none;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5em;
+  margin: 0.4em 0;
+}
+
+#excluded-details {
+  margin-top: 0.6em;
+  padding: 0.4em 0.6em;
+  border-top: 1px solid #d7d7db;
+  max-height: 14em;
+  overflow-y: auto;
+}
+
+#excluded-details.hidden {
+  display: none;
+}
+
+#excluded-details h3 {
+  margin: 0 0 0.3em;
+  font-size: 1em;
+}
+
+#tune-all-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+#excluded-list .excluded-rule {
+  display: block;
+  margin: 0.15em 0 0.5em 1em;
+  font-size: 0.8em;
+  color: #555;
+  word-break: break-all;
+}
+
+#pick-text .pick-what {
+  font-weight: bold;
+  margin-bottom: 0.25em;
+}
+
+#pick-text .pick-rule {
+  display: block;
+  font-size: 0.85em;
+  margin-bottom: 0.4em;
+  word-break: break-all;
+  color: #9fe8ff;
+}
+
+#excluded-add-label {
+  margin: 0.4em 0 0.2em;
+  font-weight: bold;
+}
+
+#excluded-add-label span {
+  font-weight: normal;
+  opacity: 0.75;
+}
+
+#excluded-add-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 7.5em auto;
+  gap: 0.4em;
+  align-items: center;
+  margin: 0 0 0.6em;
+}
+
+#excluded-add-text {
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+#excluded-add-kind {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Three equal compact part-rule choices, without changing Up/Down layout. */
+#pick-mode { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.35em; padding: 0.3em 0.8em; }
+#pick-mode button { min-width: 0; padding: 0.45em 0.2em; }
+
+
+/* Delete all pages (folder / global settings) */
+#settings-form fieldset.danger-zone {
+  border-color: #b3261e;
+}
+#settings-form fieldset.danger-zone legend {
+  color: #b3261e;
+}
+button.danger {
+  color: #fff;
+  background: #b3261e;
+  border-color: #8c1d18;
+}
+button.danger:hover:not(:disabled) {
+  background: #8c1d18;
+}
+button.danger:disabled {
+  opacity: 0.45;
+}
+#delete-all-dialog {
+  max-width: 34em;
+}
+#delete-all-dialog h1 {
+  font-size: 1.25em;
+  margin-top: 0;
+  color: #b3261e;
+}
+#delete-all-dialog p {
+  line-height: 1.4;
+}
+#delete-all-dialog div {
+  margin-top: 0.5em;
+}
+#delete-all-typed {
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 1.1em;
+  padding: 0.35em 0.5em;
+}
+.delete-all-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5em;
+  margin-top: 1em;
+}
+.delete-all-buttons .hidden,
+#delete-all-dialog .hidden {
+  display: none;
 }

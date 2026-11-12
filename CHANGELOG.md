@@ -1,5 +1,311 @@
 # Changelog
 
+## 5.3.0 build 119 - 2026-11-11
+
+This is the release that follows 5.1.6. It contains everything from **5.1.7** to **5.3.0.119**, which were test builds and were not published on their own. The first part below is what is new since the first 5.3.0 notes (further down); everything in those notes still applies.
+
+### Newer scanning: Automatic now steps up through Standard, Dynamic and Popup
+
+- **Automatic works in three stages and stops as soon as one succeeds.** **Standard** first (up to 10 seconds, retried while the page is still loading or recovering), then **Dynamic** (its own time limit, see the next item), then **Popup** as the last fallback. A scan that passes at any stage is saved and the later stages are never started.
+- **Automatic remembers what a page needed.** A link that needed Popup goes straight to Popup next time, a link that needed Dynamic starts at Dynamic (and moves on to Popup only if that fails). Choosing Automatic again, or changing the address, starts the check over.
+- **A mode you pick by hand is still the mode that is used,** and **Lock** still means no other kind of scan is ever tried. Only Automatic moves between modes.
+- **Standard no longer accepts a page that is only its outline.** A Standard capture is checked for pictures that are only placeholders, lists a script fills in afterwards, and tall areas that hold nothing, and Automatic moves on to Dynamic when the page is not really there. A hand-picked Standard never changes mode; it keeps trying inside its 10 seconds and, if the page is still empty, keeps your last good copy instead of saving an empty page.
+- **A site that is down cannot push a page to a slower mode.**
+
+### New: Maximum Dynamic Scan Time (Global Settings)
+
+- A new slider in **Global Settings**, **Dynamic scanning**, sets the longest a Dynamic scan may take: **20 to 45 seconds in 1-second steps, 25 by default**. It applies to Dynamic scans and to the Dynamic stage of Automatic.
+- A Dynamic scan **finishes early** as soon as the page is complete; the limit is only how long it may keep trying. In Automatic, a Dynamic scan that runs out of time moves on to Popup.
+
+### Improved: Dynamic scanning catches far more lazy-loaded pages
+
+- The page is scrolled by the extension itself, row by row at a human pace, instead of by the page's own timers, which Firefox slows down in a background tab. Galleries that load pictures as you scroll now load completely in the background tab far more often, so **Popup is needed much less often**. (Popup is still the faster scan on some sites.)
+- Pictures that are in the page but have not been decoded or painted yet are noticed and waited for, and a scan that reached the bottom is no longer failed only because the clock ran out during the final clean-up.
+- Zoom is set to 100% for the scan and your own zoom is put back afterwards.
+
+### New: Include, Ignore and Exclude: "Select parts"
+
+The **Ignore parts...** button is now **Select parts...**, and its window has **three** choices for what **Add & Next** does:
+
+| Choice | What it does |
+| --- | --- |
+| **Include** | **Only the selected regions count as changes.** The rest of the page stays visible but is not compared. Use it when one area (a list of releases, a price) is the only thing you care about. |
+| **Ignore** (default) | The selected part is left out of the comparison but stays visible. |
+| **Exclude** | Ignored too, and removed from the saved view; can be copied as a uBlock Origin filter. |
+
+- **Exclude wins over Ignore, and Ignore wins over Include** when parts overlap. With no Include rule the whole page counts as before.
+- With an Include rule, changes to the page's head (title, meta tags) do not count.
+- **Page Settings, Selected parts** (it was "Ignored details") lists every Include, Ignore and Exclude rule; each has **Remove** and a button that moves it to the next kind (an Include rule offers **Make ignore**, an Ignore rule **Make exclude**, an Exclude rule **Make include**). **Add a rule by hand** has an Include choice too.
+- Include, Ignore and Exclude rules are carried by **Backup Pages and Restore**.
+- The tuning bar's **All changed** preview leaves ignored, excluded and not-included parts alone, so it shows only the blocks that really count.
+
+### Improved: the picker on ad-heavy sites
+
+- **While you select, empty click-catching layers are looked through,** so the card or picture under an advert's see-through overlay can be selected. Nothing on the saved page is changed.
+- **Position-only rules are refused** ("Unstable element"). Ad networks rebuild those elements on every load, and such a rule could later hide an unrelated button. Use a stable part, the automatic click-layer protection, or block the script host.
+- **Clicking inside a saved part no longer removes the rule around it,** and the same rule cannot be saved twice.
+- **The live-page picker works on any page of a monitored site,** not only the exact address you scan. If the site is not monitored the window says to add a page of it first.
+- **If an advert opens a top-layer pop-up over the picker,** the picker puts itself back on top. A narrow frame no longer clips the picker window.
+- **Select a visible ad / iframe:** the real, visible advert can be selected without running its click.
+- **Block pop-ups opened by scripts** and **Make hidden click layers click-through** are stricter: only empty, viewport-covering layers are touched, never visible dialogs, video players or the site's own controls.
+
+### New: block a script host or third-party frames on a site (optional)
+
+- In the live picker, a third-party **script host** (an exact host name, for example `ads.example.net`, no wildcards and never the site itself) can be blocked on that site, and **third-party frames** can be blocked on a site as a whole (off by default, because some sites need embeds for their videos). The window warns about this.
+- They work only for sites you monitor, only when **Hide excluded parts on sites** is on, and only for the hosts you chose. A request the rule does not match is always allowed. Reload the website after saving. Remove a rule under **Saved parts** to unblock it.
+- This needs the **webRequest** and **webRequestBlocking** permissions (new in this release). Nothing is read, recorded or sent anywhere.
+
+### New: websites that are down, and the three-hour recheck
+
+- **A failed scan no longer replaces your last good copy.** The saved page and its changes are kept.
+- **The first failure shows grey** with the reason (the sidebar hover says when the next try is). **One confirmation scan runs three hours later**, not on the normal interval. If the site is still unavailable, the link turns **red**, you get a **"website still down" notification** once, and the toolbar badge shows the number of down sites with a red **!**.
+- **Cloudflare error pages are recognised** (error 521 and the like, even with a blank title or extra markup). An ordinary article that only talks about Cloudflare or HTTP errors is not mistaken for one.
+- **A good scan clears the status** and a down site never counts toward promoting a link to a slower scan mode.
+- A capture that was rejected as incomplete is not counted as a finished scan: the previous copy stays, and a folder scan no longer reports a misleading "0 changes".
+
+### New: Delete all pages (Folder and Global Settings)
+
+- **Folder Settings** has **Delete all pages in this folder...** and **Global Settings** has **Delete all pages...** (a request from users). It deletes the pages in one go and can **include the folders** inside.
+- **Two guards:** read what will be deleted and tick **I understand that this cannot be undone**, then **type DELETE** (DELETE ALL for the whole list) before the Delete button works. Enter never deletes by itself, progress is shown page by page, and Cancel or Escape leaves everything as it was.
+- **Make a Backup Pages file first;** a deleted page cannot be brought back except from a backup.
+
+### Changed: scan order and counts
+
+- **Right-click Scan goes next,** for a page and for a whole folder, ahead of the work already waiting. If that page is already being scanned, the running scan finishes and a fresh scan of it follows, using the latest settings.
+- **Numbers like `100% (34)` or `21.3K (1,200)`** inside one highlighted element are treated as numbers with "Ignore changes to numbers".
+- The toolbar popup lists **sites that are down** as changed.
+
+### For testers: diagnostic tools (hidden)
+
+Click the Update Scanner arrow in the toolbar popup header **seven times** (each within 2 seconds) to show **Test: capture each Dynamic pass** and **View captured passes**. They are off by default, hiding them switches capturing off, and the captures stay inside the browser (a viewer page; nothing is uploaded). A capture adds about 15 seconds to the Dynamic limit.
+
+## 5.3.0 - 2026-11-06 (first 5.3.0 notes)
+
+This release also contains everything from **5.1.7** to **5.2.0**, which were test builds and were not published on their own.
+
+### New: count changed blocks (posts, items) instead of characters
+
+Listing pages (forums, blogs, shops, "latest uploads" pages) show their content as repeated blocks: a post with a title, a date, a category, a picture and a few lines of text. Counted by characters, ONE new post can add up to hundreds of changed characters, so a page with two new posts looks like a huge change. Counted by blocks, it is two changes.
+
+- **New setting "Count each changed block (post, item) as one change"** in Page Settings, Folder Settings and Global Settings (off by default, so every existing link behaves exactly as before). A post, list item or table row with anything changed in it counts as ONE change, however much of it changed.
+- **What is a block:** the outermost repeated element of the page (every post of a listing, every item of a list, every row of a table) that is still post-sized (about 1500 characters or less). Text with no repeated element around it counts as one block per enclosing block-level element.
+- **The Change Threshold becomes a number of blocks.** With the option on, the slider offers fine steps: **1 to 25 in steps of 1, then 30, 35, 40, 45, 50, 60 and 70** (and 0 for "all changes"). It is still stored as characters, 10 per block, so nothing else in the extension changes. Switching the option on or off keeps your threshold as close as the new steps allow.
+- **The Changes view uses the block count:** "12 blocks changed, 2 over the 10-block threshold" (for a stored threshold of 100).
+- **A block that only moved is not a change.** When a new post is added at the top of a listing, the word-by-word comparison can mark scraps of the posts below it, which merely moved down. A block that is also on the old page is ignored and not highlighted.
+- **New setting "Blocks this alike count as the same"** (a slider from Exact, 100%, down to 1%; 60% by default, set later in the same release; links, folders and global). A block counts as unchanged when at least this share of its words is also in a block of the old page, so a new comment count, a counter or one edited word in a long post is not a change. Lower it when a site rewords the small text of its posts (labels, dates, file sizes) and those posts keep showing up as changed.
+- **The highlight shows what changed.** A block that is an edited version of a block on the old page gets its highlight on exactly the text that differs (for example the line under the picture), not on its title. A block with no old counterpart (a new post) is highlighted on its main text (its heading, else its first link). Pictures and the rest of the block stay clearly visible.
+- **Next / Previous: one stop per block**, however many places inside it are highlighted, so the counter always matches the block count.
+- **"Ignore changes to numbers"** also works with block counting: a block whose only differing text is a number does not count.
+
+### New: "Page is translated by the browser"
+
+Firefox's built-in page translation rewrites a page's text only as it scrolls into view. A Popup scan sweeps the page quickly, so it could capture half-translated text (one line English, the next line Japanese) and report changes that are not real. A scan that translates differently from the last one also produces a flood of "changes".
+
+- **New switch "Page is translated by the browser"** (Page, Folder and Global Settings, scan mode section; off by default).
+- **With it on,** the first sweep of a Popup scan pauses a little longer (275 ms) on every screen, so the translation can finish before the capture. The other sweeps are unchanged.
+- **With it off** the scan is exactly as fast as before. Leave it off for normal pages.
+- It is a trade-off between speed and a consistent capture, so you choose it per link.
+
+### New: "Ignore parts" picker (per link)
+
+Some pages have a part that changes on every scan whatever you do: a rotating news ticker, a "visitors online" box, an advert slot. Now you can tell one link to ignore exactly that part.
+
+- **Ignore parts...** is a new button in the page view (next to the view dropdown). It opens the saved page (View New Page) and a **small floating window** (dark, like the other pickers of this family; drag its title to move it) with the instructions and the buttons. The page itself stays fully visible and clickable:
+  - Move the pointer: the part under it gets a thin cyan dashed outline.
+  - **Click** the part to ignore. It gets a **3 px cyan dashed outline**.
+  - **▲ Up** selects the box around it, **▼ Down** goes back inside, toward what you clicked (or use the **Up / Down arrow keys**), until the outline covers exactly the right part. The window says what is selected and how many characters it holds.
+  - **Add & Next** (or **Enter**) adds the outlined part to this link's list and lets you pick another. Parts already ignored are greyed out; click one and the button reads **Stop ignoring**.
+  - **Finish** adds a part that is still outlined, saves, and leaves the picker (**Escape** leaves without adding that last one). You return to the view you came from, now without the ignored parts.
+- **The list is per link.** Page Settings shows "Ignored parts of this page" with a **Remove** button for each. Folder and Global Settings do not have it, because only specific sites need it.
+- **Ignored parts are removed from both saved pages before anything is compared.** Nothing inside them can create a change, a highlight, a count or a Next / Previous stop, in the scan itself and in the Changes view, whatever the scan mode and whichever counting options are on.
+- **How a part is remembered:** as a CSS selector built to be stable (an id when the page has a good one, otherwise a short chain of tags, classes and positions; classes that look generated or that describe a state, such as "active", are not used). The window says how many ignored parts it could not find on the page shown. If a site changes its page structure, remove the part and pick it again.
+- Pick the box around a rotating item, not the changing line, so a new rotation can never fall outside it.
+
+### New: "Ignore changes to dates and times"
+
+- **New setting in Page, Folder and Global Settings** (off by default), next to "Ignore changes to numbers". A date or time is not a change: a running clock in a page header (`08:46:42 PM`), `Today at 7:46 PM`, `October 29, 2026`, `12 October 2026`, `2026-10-29`, `10/12/2026`, `Mon, Oct 12th 2026 at 7:05 PM`, `7 hours ago`, `just now`.
+- It works in the comparison itself: dates and times are replaced by a placeholder in both pages before the words are compared, so nothing around them is highlighted either. Ordinary words such as "may take" are not mistaken for dates.
+- It can be combined with "Ignore changes to numbers".
+
+### Changed: a steadier, shorter page bar
+
+- **The Previous / Next buttons stay put while the view is redone** (a slider moved, the Blocks switch toggled). They used to vanish for a moment, so the row shrank and the dropdown above it changed width. The **view dropdown has a fixed width** now, and its text is shorter ("View Changes (9 blocks)", "View Changes (22 chars, 2 over)"), so nothing moves.
+- **The old "N changed, every change is reported (?)" text after the scan line is gone.** It said the same as the dropdown. **Hover the view dropdown** for the full explanation, what is normal for the page and, with block counting, how many blocks you would get at each Alike setting.
+
+### Fixed: Next went back to the first change
+
+Near the end of a page, or when two changes are in the same row, the page cannot always scroll far enough to put the change at the usual spot. Next / Previous then lost track of where it was and wrapped around to the first change ("Change 4 of 9" went to 1). It now keeps its place until you scroll by hand. The **first** Next on a page goes to the first change at the top-left (it used to start at the first change below the middle of the window). The orange outline that shows the change you jumped to now stays for **3 seconds**, and the previous one is removed at once.
+
+### New: the block tuning bar (the Alike setting, adjusted live)
+
+How alike a block must be to a block of the old page to count as the same is the setting that matters most for block counting, and it differs from site to site. It is a setting, so it stays out of the normal bar: there is no button for it there.
+
+1. In **Page Settings**, tick **Count each changed block (post, item) as one change**. A **gear button ("Tuning bar")** appears next to it. When you close Page Settings, the Changes view loads with the **tuning bar** showing, once, so you find it.
+2. The **tuning bar** is parked in the empty middle of the page bar, at its bottom right next to the view controls, so it takes no room of its own (only in a narrow window, below about 1150 pixels wide, does it take a small row under the scan line instead). It has **Alike**, a slider from **Loose** to **Exact** (1% to 100%), the percentage, and a **tick (finished)** button. **Hover it** to see the number of blocks you would get at each setting ("Blocks at each setting: 100%: 17, 90%: 12, 80%: 10, 70%: 9 ...").
+3. Slide it and, **when you let go**, the page is compared again: the highlights, the block count in the view dropdown and the Next / Previous stops follow it. While you drag only the percentage changes (the arrow keys update on each press). The scroll position is kept.
+4. When it is set the way you want, press the **tick**. The bar goes away and stays away. The only way to bring it back is the **gear button next to the block option in Page Settings** (it reads "Tuning bar shown" while the bar is on).
+- The value is **saved for that link** as you slide, so the next scan uses it. Every link has its own value. **New links start at 60%.** Folder and Global Settings have the same slider as the default for new links, and Page Settings has it too, with a line saying what the value means.
+- Turning block counting off removes the bar.
+
+### Fixed: Next / Previous jumped around: now in reading order
+
+Next walks the changes the way you read a page: the **top-left** one first, then **to the right** along the row, then the **next row down, from the left**. A row is every change within about 40 pixels of the row's highest one, so cards in a grid are not shuffled when their titles wrap differently or sit a little higher or lower. Previous walks the same order backwards. While you scroll, the position of a block's stop is measured from its highest highlight and the order is kept.
+
+The block count in the header only counts blocks that have a highlight to jump to, so the number of blocks and the number of stops stay the same.
+
+### Fixed: Next / Previous counted more stops than there were blocks
+
+With block counting, every highlight of one block is one stop, but only when its highlights followed each other in the page. On a page where highlights of different blocks are interleaved (a grid of cards, for example, 10 blocks and 17 changes) one block could be counted several times. Highlights are now grouped by block wherever they are in the page, and the stops are listed from the top of the page down, so the "N changes" counter next to Next / Previous matches the block count in the header.
+
+### Fixed: long posts were split into several blocks
+
+A block was at most about 1500 characters of text. A post on a feed page (Patreon, for example, keeps the full text behind "Show more" in the page) is much longer, so it was split into pieces (the creator line, the title and the text were separate blocks, each highlighted on its own, and 25 "blocks" were reported for a handful of posts). An item of a real list (three or more alike elements next to each other: the posts of a feed, the cards of a grid, the rows of a table) may now hold up to about 20,000 characters and is one block. Anything that is not part of such a list keeps the old 1500 limit, so page columns and wrappers still do not turn into blocks.
+
+### New: a brown box around every changed block
+
+With block counting on, each changed block now also gets a **brown box** in the Changes view, and Next / Previous stop at it. This finds changes that have no highlight you can see: a new video thumbnail whose title is hidden or hard to read, for example, which used to be counted ("1 block") with nothing to look at. The tooltip of the Previous / Next count also names the text and the parent element of the change you are on.
+
+### Fixed: the change count without block counting
+
+Without block counting, the count beside Previous / Next said "Change 1 of 2" where 2 was only a guess (highlights close together count as one stop, so five titles in a row were "one"). It now shows the exact number of characters changed ("280 characters changed"), the same figure as the view dropdown. Previous and Next still step through the highlights. With block counting on, the count is the number of changed blocks as before.
+
+### Changed: two icons in the toolbar popup, and a + pad in the picker
+
+- The toolbar popup header now has two icons: the **picker** (an eyedropper) that starts **Pick on this page** in one click, and **Copy filters** (a clipboard with an arrow) that copies the excluded parts of all your scanned pages as uBlock Origin filters. A note under the header says what was copied and reminds you to paste it into uBlock Origin (Dashboard, My filters). The **Copy uBlock Filters** menu entry is gone.
+- In the picker on the live page the four direction buttons are laid out as a **+**: **up** (the box around), **down** (the part inside), **left** and **right** (the box before and after). Add & Next, Finish, Undo and Clear all sit beside it.
+- **Stop ignoring** now also works when you click **inside** a saved part: the saved box is marked with a tick in the path of levels, and the button reads Stop ignoring.
+
+### New: hide excluded parts when you visit a site (optional)
+
+The toolbar **Menu** has a new switch, **Hide excluded parts on sites** (off by default). When it is on, Update Scanner itself keeps the parts you **Excluded** hidden whenever you open a page of that site, so uBlock Origin is not needed for that. The rules of all your scanned pages on the same site apply (www. is ignored); parts you only **Ignored** stay visible. It hides parts after the page loads: it does not stop an advert from downloading, which a blocker such as uBlock Origin can still do, so **Copy uBlock Filters** stays. While you use **Pick on this page** the hiding is paused, so excluded parts can be seen and selected again. The switch is kept in backups.
+
+### New: two site-wide rules against ads that open when you click
+
+Excluding one element is not enough on some ad sites: the ad network makes its see-through layers with new random names on every visit, or opens the ad with a script that listens to your clicks. The picker window has two buttons for these cases (they apply to the whole site, and need **Hide excluded parts on sites** to be on in the toolbar Menu; reload the site afterwards):
+
+- **Make hidden click layers click-through on this site:** on every visit Update Scanner finds the see-through, click-catching layers by what they are (not by name) and lets your click pass through them to the real page.
+- **Block pop-ups opened by scripts on this site:** refuses new windows and tabs that the page's own script asks for (window.open, or a link it makes and clicks itself). Links you click yourself open as usual.
+
+How they decide (found on a real ad site, where the layer and its link are made with new random names on every visit and a script also cancels the click on the real link):
+
+- **Click-through layers** acts only on **confirmed interceptors**: invisible or transparent parts that sit above the centre of a real link or button on the page. It keeps the outer layer **and the layers inside it**, so a link inside the layer cannot switch clicks back on. A visible picture, video or control is never treated as invisible. It does nothing on a Cloudflare check, and never touches dialogs or frames (the Cloudflare checkbox).
+- **Block pop-ups** now also keeps a real click of yours on an ordinary link to the same site away from the page's own scripts, so a script that cancels the click and opens its advert instead can no longer stop the link from working. Links that open in a new tab, `#` links and links to other sites are left alone.
+
+Both are listed in the window's **Saved parts** and in **Page Settings, Ignored details** as "site rule", can be removed there, and are kept in backups.
+
+### New: pick parts on the live page
+
+The Ignore parts picker works on the saved copy of a page, which does not have what a script adds later (a bar that slides in, a banner that loads late), and its rules can differ from the real page. The toolbar **Menu** now has **Pick on this page**: the same small window appears on the **live page** in the current tab, with **Ignore / Exclude**, **Up / Down**, **Add & Next**, **Undo**, **Clear all** and **Finish**.
+
+- A **path of levels** (like the browser Inspector's) shows every box around the part you clicked, from the part itself to the whole page area; click one to select it, so you can jump straight to the whole bar. The window also shows the rule for the selected part.
+- **Saved parts** opens the list of what is already saved for this page (hidden parts cannot be clicked any more), each with **Remove** and **Make ignore / Make exclude**. **Undo** steps back through everything you changed, including **Clear all**.
+- The rule is built from the page's real elements, so it matches what the page really is and what uBlock Origin sees.
+- **Find hidden click layers:** some pages put see-through layers over the page that open an ad when you click in certain places. This button outlines them in red and lists them (a transparent or invisible link, frame or layer that takes clicks); click one in the list to select it, then Add & Next to exclude it. Ordinary visible parts and layers that let clicks through are not listed.
+- Saved parts stay visible while you pick, outlined in grey, so you can select one and press **Stop ignoring**; a **Preview** switch hides the excluded ones to see the result. Nothing on the page is changed for good.
+- The parts are saved to the scanned link of that page (the page must already be one of your scanned pages), and show up in its **Ignored details**. **Copy uBlock Filters** copies them like any other excluded part.
+- The picker window and the see-through sheet that covers the page live in a frame of their own, in the browser's top layer: above every layer the page has (an advert's overlay cannot cover them), and your clicks, in the window or on the page, never pass through the page's own scripts. An advert or a link cannot open, and pop-up windows are refused. Scrolling with the wheel still works. While the picker is open the page also does not hear the focus changes and pointer leaving events that the picker's frame causes, which adverts use to guess a click on a frame or an exit at the top edge of the page. There is an **X** (cancel) in the corner of the window, and Escape does the same.
+- Escape or the Finish button closes it; the same menu item again closes it too.
+
+### New: "All changed" preview on the tuning bar
+
+When a page has not changed since the last scan there is nothing to tune against. The tuning bar now has an **All changed** tick: while it is ticked the Changes view treats every block of the page as changed, so you can see exactly how the page is divided into blocks and how many there are. Untick it to go back to the real comparison with your real changes. Nothing is saved and the page's data is not touched. (The **Alike** slider only affects blocks that were edited, so use the tick to check the blocks and the real view to tune Alike.)
+
+### Changed: a thicker outline in the Ignore parts picker
+
+The part you have selected is now outlined with a **4 px** cyan dashed line (it was 3 px), so it is easier to see.
+
+### New: add a rule by hand
+
+A bar that a script slides in on the live site (a pink promotion bar, a cookie strip) is not in the saved copy of the page, so the picker cannot reach it. In **Page Settings**, **Ignored details** now has a field to **type a CSS selector** and add it as **Exclude** or **Ignore**. Get the selector from the browser's Inspect (right-click the element, Copy, CSS Selector) or from uBlock Origin's picker. An invalid selector is refused. It is copied as a uBlock Origin filter like any other excluded part.
+
+### Changed: the picker window says what is selected
+
+The Ignore parts window now shows **which step** of the way up you are on ("Step 2 of 4"), what is selected (its tag, class, a bit of its text and how many characters it holds) and the **rule** that would be saved for it, so you can see it before you press Add & Next.
+
+### New: Page Settings for the page you are on
+
+The toolbar **Menu** has a **Page Settings** entry at the top. It opens the settings of the scanned page that is open in the current tab, without having to find it in the list first. If the page in the tab is not one of your scanned pages it says so.
+
+### New: Ignore or Exclude, and copying uBlock Origin filters
+
+The Ignore parts window now has two choices above its buttons:
+
+- **Ignore** (the default) is for things you still want on the page but not counted as changes: news, tickers, counters. They stay inside Update Scanner Reborn.
+- **Exclude** is for things you do not want at all: adverts and menu items. An excluded part is ignored by the scans exactly like an ignored one, and it is also kept as a rule you can copy into **uBlock Origin**, to make it permanent.
+
+To copy the rules: in the toolbar popup press **Menu**, then **Copy uBlock Filters** (all your links, in one block), or in **Page Settings**, under the ignored parts list, press **Copy as uBlock filters** (this link only). Then paste into uBlock Origin's **My filters**. The block has a start and an end line, so a later paste can replace it, and each site has its own heading with the site name, the link names and the date. In **Page Settings** the list no longer pushes the settings down: there is a small **Ignored details** button (with the counts) that opens the list in a panel at the bottom of the window, and **Copy as uBlock filters** beside it. **Clear all** there asks for a second press ("Really clear 3?") so one slip cannot wipe the list. After copying, the button or menu entry says so and reminds you to paste into uBlock Origin (Dashboard, My filters). The copy says how many **Ignore** parts it left out, and warns about rules that use only tags and positions (such as `div:nth-child(23)`), which may not match the live site. The picker now avoids such rules: it keeps climbing until a class or an id is part of the selector. An element with no class or id is pointed at by its inline style or a data attribute (for example `div[style="max-width:100%;overflow-x:auto;"]` or `ins[data-zoneid="5629970"]`), which a script does not change the way it changes positions and random class names. A style with a long made-up decimal that some adverts change on every load (`100.0000000001%`) is matched by what comes before and after it, and look-alike siblings (two banner slots with the same style) are matched together, without a position. For an advert with neither it points at what is inside instead, a link, frame or picture that goes to another site, for example `body > div:has(a[href*="ohchat.com"])`, so a banner keeps matching when a script moves it, and a rule made for one banner also hides the others from the same advertiser. Parts picked with an older version keep their old rule; pick them again to get the sturdier one. In that list each part can be switched between **Make exclude** and **Make ignore**. Parts made by earlier versions count as Ignore. Excluded parts and their dates are included in backups.
+
+### Fixed: an ignored menu item could stay behind
+
+When several ignored parts were list items picked by position (for example the third and fifth entries of a menu), removing the first one moved the others up, so the next ones pointed at the wrong item and one of them stayed on the page. All ignored parts are now found first and removed together, so each one is exactly the item you picked.
+
+### Backups and restores carry every new setting
+
+Everything added in this release is saved by **Backup Pages** (the file) and by the **automatic bookmark backup**, and comes back with **Restore Pages**, for each link and as the defaults of folders and of Global Settings: **Count each changed block** and its **Alike** setting, **Ignore changes to dates and times**, **Page is translated by the browser**, whether the **tuning bar** is shown, and the list of **ignored parts**. A real backup and restore of a link, a folder and the global settings with all of these gave back identical settings. A backup file made by an older version restores normally (the new settings take their defaults), and a damaged or hand-edited file with an invalid value for one of them (a block match of 5, an ignored-parts list that is not a list) is rejected with a clear message before anything is restored.
+
+### New: Undo and Clear all for ignored parts
+
+If you ignore something by mistake, you can put it back:
+
+- **In the picker window:** **Undo** steps back through your changes to the list, one at a time (also after a clear). **Clear all** removes every ignored part of the page; it asks for a second press ("Really clear 3?", within 4 seconds) because it is easy to press by mistake, and Undo brings them back. Clicking an ignored part and pressing **Stop ignoring** still removes just that one.
+- **In Page Settings:** a **Clear all** button under the "Ignored parts of this page" list (each part also has its own **Remove**). Press Ok to save.
+
+### Fixed: ignored parts were still drawn when "nothing counted"
+
+When a link has nothing left to report (the Changes view says "nothing counted"), it shows the saved new page as it is. That view skipped the step that removes the parts the link ignores, so an ad or a ticker that was ignored (and that no longer counted, correctly) was still drawn on the page, as if it had not been scanned again. The Changes view now hides ignored parts in this case too, like View Old Page and View New Page. The saved pages are not changed: ignored parts are only left out when a page is shown or compared.
+
+### Fixed: pop-ups that cannot be closed in the saved page
+
+A page saved while it showed a subscribe box, a donation banner, a chat widget or a cookie notice shows them again in the page views, and they cannot be closed there because the page's own scripts are switched off. Two ways to get rid of them:
+
+- **Hide pop-ups** (new button on the row with Previous / Next): hides everything that floats over the saved page. Press it again (it reads **Show pop-ups**) to bring them back. It only affects the view you are in; nothing is saved.
+- **Ignored parts are now hidden in the page views too.** Pick a pop-up with **Ignore parts...** (Add & Next for each one) and it is gone from View Old Page, View New Page and View Changes, as well as from every comparison. The picker itself still shows ignored parts greyed out so they can be put back.
+
+### Fixed: clicking a link on its own site opened a new tab
+
+If the tab you are looking at is already on the site a link monitors (for example you are on jnovels.com and click the jnovels link in the sidebar or the toolbar popup), the Changes view now replaces that tab. A new tab, to the right of the current one, is opened only when you are on a **different** site. "Same site" means the same host name (ignoring a leading "www.") or a sub-domain of it. From an Update Scanner tab the page still replaces the tab, and Ctrl-click / middle-click still open a new tab.
+
+### Fixed: a new card's date was still highlighted
+
+When a listing gains new cards (posts), everything in them is new text, so the word-by-word view highlighted their title, lines, date and comment count. With "Ignore changes to dates and times" on, a highlight that is only a date or time is now dropped even inside new content (and with "Ignore changes to numbers" on, a lone number such as the comment count already was). Turn on "Count each changed block (post, item) as one change" to see one highlight per new card, on its title, instead of every line.
+
+### Fixed: some dates were not ignored
+
+On the same page some dates were ignored and others were not. Themes often write a date with non-breaking spaces ("November&nbsp;6,&nbsp;2026"), and the date matcher read that as text that is not a date. It now treats a non-breaking space (written `&nbsp;`, `&#160;` or `&#xA0;`) as a space, so these dates, times ("Today&nbsp;at&nbsp;7:46&nbsp;PM") and "7&nbsp;hours&nbsp;ago" are ignored like the others.
+
+### Fixed: "Ignore changes to dates and times" had no effect with block counting
+
+With "Count each changed block (post, item) as one change" on, the dates in a post's details line ("November 6, 2026" instead of "October 29, 2026") were still highlighted and still made a block count as changed. The block comparison (is this block the same as one on the old page, and which text in it differs) now leaves out dates and times when that option is on, in the same way it leaves out numbers when "Ignore changes to numbers" is on. A counter such as a comment count still counts unless "Ignore changes to numbers" is on too.
+
+### Fixed: "Ignore changes to numbers" did not hide numbers inside words
+
+When a number changed inside a sentence ("24 Guests, 3 Users (7 Spiders)" became "21 Guests, 4 Users (5 Spiders)"), the word comparison lined up the words around the numbers and highlighted them (for example "Guests, 3 Users (7"), so the page still reported changes. With the option on, numbers in the page text (not in links or attributes) are now replaced by a placeholder in both pages before the comparison, so a changed number can no longer create a highlight. A lone clock time such as `08:46:42` also counts as a number.
+
+### Changed: the settings dialog
+
+- **Wider, two columns, and Ok / Cancel always in view.** Page, address, how often and scan mode are on the left; what counts as a change on the right; notifications along the bottom. On a normal window nothing needs scrolling, and on a small one the buttons stay at the bottom while the rest scrolls. Narrow windows go back to one column.
+- **Clearer header wording.** The line above a changed page now says "22 characters changed, 2 over the 20 threshold" (it used to say "22 changed"), so it is not mistaken for a number of changes. With block counting it says "12 blocks changed, 2 over the 10-block threshold". The number of places is the separate "N changes" counter beside Next / Previous.
+
+### Change Threshold: finer steps at the low end
+
+- The normal (character) threshold now offers **0 (all changes), 5, 10, 15, 20, 25, 30, 35, 40, 45, 50**, then 60 to 200 in steps of 10, 220 to 300 in steps of 20, 325 to 500 in steps of 25 and 600 to 1500 in steps of 100. It used to jump from 0 straight to 10. Saved thresholds are unchanged.
+
+### Fixed
+
+- **Highlight colours and Next / Previous appeared late or not at all on some pages.** They were set up only when the Changes view's frame had loaded EVERY image and script of the captured page (Standard scans keep the page's own links). One slow or blocked resource left the highlights pale yellow and the buttons missing. They are now set up as soon as the page's structure is there.
+- **Next / Previous vanished when all highlights were in a sticky or fixed part of the page** (a pinned header with message and alert counters, for example). Those highlights are now used as the stops (the part is outlined; the page cannot scroll to it). If the highlights are in parts that are not showing at all, the bar stays, says how many, and the buttons are greyed out.
+- Reminder: **Next and Previous only appear when the Changes view has something highlighted.**
+
+### Notes
+
+- Block detection is a heuristic. A page that builds its listing with unusual markup may group differently; if a post is split into several blocks or several posts count as one, tell us which page.
+- Removed posts are not shown: the Changes view shows the new page and highlights what is new or edited.
+- No new permissions.
+
+### Changed: a shorter header
+
+- The **Ignore parts...** button now sits on the same row as **Previous / Next**, after them, so the header is one row shorter and leaves more room for the page.
+
 ## 5.1.6 - 2026-11-03
 
 ### New: jump from change to change

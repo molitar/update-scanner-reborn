@@ -13,11 +13,21 @@
     <div id="header">
       <div id="icon"></div>
 
-      <div>
+      <div id="title-block">
         <div>
           <h1><a id="title"></a></h1>
         </div>
         <div id="subtitle"><span id="highlight"></span></div>
+        <div id="tune-bar" class="hidden">
+          <label for="tune-slider" id="tune-label" title="Loose (left) to exact (right)">Alike</label>
+          <input id="tune-slider" type="range" min="1" max="100" step="1" value="60"/>
+          <span id="tune-value">60%</span>
+          <label id="tune-all-label" for="tune-all"
+            title="Preview: treat every block as changed, so you can see how the page is divided into blocks and how many there are. Untick to go back to the real comparison. Nothing is saved.">
+            <input type="checkbox" id="tune-all"/> All changed</label>
+          <button id="tune-hide" class="browser-style"
+            title="Finished: hide this bar. It comes back with the Show tuning bar button next to the block option in Page Settings.">&#10003;</button>
+        </div>
       </div>
 
       <div id="header-right">
@@ -35,14 +45,47 @@
             <option value="diff">View Changes</option>
           </select>
         </div>
-        <div id="change-nav" class="hidden">
-          <button id="change-prev" class="browser-style"
-            title="Previous change (P)">&#9664; Previous</button>
-          <span id="change-count"></span>
-          <button id="change-next" class="browser-style"
-            title="Next change (N)">Next &#9654;</button>
+        <div id="header-actions">
+          <div id="change-nav" class="hidden">
+            <button id="change-prev" class="browser-style"
+              title="Previous change (P)">&#9664; Previous</button>
+            <span id="change-count"></span>
+            <button id="change-next" class="browser-style"
+              title="Next change (N)">Next &#9654;</button>
+          </div>
+          <button id="hide-floating-button" class="browser-style"
+            title="Hide pop-ups, chat widgets and banners that float over the saved page (they cannot be closed here because the page's own scripts are off). Only for this view.">Hide pop-ups</button>
+          <button id="ignore-parts-button" class="browser-style"
+            title="Pick parts of this page that this link should ignore, such as a rotating news ticker or a visitor counter">Select parts&hellip;</button>
         </div>
       </div>
+    </div>
+
+    <div id="pick-bar" class="hidden" role="dialog" aria-label="Select parts of this page">
+      <div id="pick-handle" title="Drag to move this window">Select parts of this page <span>(drag here to move)</span></div>
+      <div id="pick-text"></div>
+      <div id="pick-mode" role="group" aria-label="What Add & Next does">
+        <button type="button" id="pick-mode-include" class="browser-style" title="Include: only selected regions count as changes; the rest stays visible.">Include</button>
+        <button type="button" id="pick-mode-ignore" class="browser-style default"
+          title="Ignore: for things you still want on the page but not counted as changes (news, tickers, counters). Stays inside Update Scanner Reborn.">Ignore</button>
+        <button type="button" id="pick-mode-exclude" class="browser-style"
+          title="Exclude: for things you do not want at all (ads, menu items). Ignored by the scans AND saved as a rule you can copy into uBlock Origin.">Exclude</button>
+      </div>
+      <div id="pick-buttons">
+        <button id="pick-larger" class="browser-style"
+          title="Select the box around this part (Up arrow)">&#9650; Up</button>
+        <button id="pick-smaller" class="browser-style"
+          title="Select the part inside, toward what you clicked (Down arrow)">&#9660; Down</button>
+        <button id="pick-add" class="browser-style default"
+          title="Add the outlined part to the ignore list and pick another (Enter)">Add &amp; Next</button>
+        <button id="pick-done" class="browser-style"
+          title="Add any part still outlined, save and leave the picker (Escape leaves without adding)">Finish</button>
+        <button id="pick-undo" class="browser-style"
+          title="Undo the last change to the ignore list (also brings back a list that was cleared)">&#8630; Undo</button>
+        <button id="pick-clear" class="browser-style"
+          title="Remove every ignored part of this page (press twice to confirm; Undo brings them back)">Clear all</button>
+      </div>
+      <div id="pick-list"></div>
     </div>
 
     <div id="frameContainer"></div>
@@ -54,87 +97,134 @@
       <h1 id="page-heading">Page Settings</h1>
       <h1 id="folder-heading">Folder Settings</h1>
       <p id="bulk-intro" class="bulk-intro hidden"></p>
-      <fieldset id="titleFieldset">
-        <label>
-          <span>Title:</span>
-          <input name="title" type="text"/>
-        </label>
-      </fieldset>
-
-      <fieldset id="urlFieldset">
-        <label>
-          <span>URL:</span>
-          <input name="url" type="text"
-                 placeholder="https://www.example.com"/>
-        </label>
-      </fieldset>
-
-      <fieldset id="autoscanFieldset">
-        <legend>Autoscan:</legend>
-        <div class="slider">
-          <span class="range-label-min">Often</span>
-          <input name="autoscan" type="range"/>
-          <span class="range-label-max">Never</span>
-        </div>
-        <output name="autoscan-description" for="autoscan">...</output>
-        <div id="apply-autoscan-row" class="apply-row hidden">
-          <input type="checkbox" id="apply-autoscan" name="apply-autoscan">
-          <label for="apply-autoscan" class="checkbox-label">Apply to existing links</label>
-        </div>
-      </fieldset>
-
-      <fieldset id="thresholdFieldset">
-        <legend>Change Threshold:</legend>
-        <div class="slider">
-          <span class="range-label-min">Low</span>
-          <input name="threshold" type="range"/>
-          <span class="range-label-max">High</span>
-        </div>
-        <output name="threshold-description" for="autoscan">...</output>
-        <output name="threshold-subdescription" for="autoscan">(...)</output>
-        <div>
-          <input type="checkbox" id="ignore-numbers" name="ignore-numbers">
-          <label for="ignore-numbers" class="checkbox-label">Ignore changes to
-            numbers</label>
-        </div>
-        <div id="apply-detection-row" class="apply-row hidden">
-          <input type="checkbox" id="apply-detection" name="apply-detection">
-          <label for="apply-detection" class="checkbox-label">Apply to existing links</label>
-        </div>
-        <div id="change-size-info" class="hidden">
-          <p id="change-size-text"></p>
-          <button type="button" id="use-suggested-threshold"
-                  class="browser-style hidden"></button>
-        </div>
-      </fieldset>
-
-      <fieldset id="scanModeFieldset">
-        <label for="scan-mode">Scan mode:</label>
-        <select id="scan-mode" name="scan-mode">
-          <option value="auto">Automatic (recommended)</option>
-          <option value="standard">Standard</option>
-          <option value="dynamic">Dynamic</option>
-          <option value="popup">Popup</option>
-        </select>
-        <output name="scan-mode-description"></output>
-        <div id="scan-mode-lock-row" class="switch-row">
-          <label class="switch" for="scan-mode-locked">
-            <input type="checkbox" id="scan-mode-locked" name="scan-mode-locked" role="switch">
-            <span class="switch-track"></span>
+      <div id="settings-columns">
+        <div class="settings-col">
+        <fieldset id="titleFieldset">
+          <label>
+            <span>Title:</span>
+            <input name="title" type="text"/>
           </label>
-          <label for="scan-mode-locked" class="switch-text">Lock scan mode</label>
+        </fieldset>
+        <fieldset id="urlFieldset">
+          <label>
+            <span>URL:</span>
+            <input name="url" type="text"
+                   placeholder="https://www.example.com"/>
+          </label>
+        </fieldset>
+        <fieldset id="autoscanFieldset">
+          <legend>Autoscan:</legend>
+          <div class="slider">
+            <span class="range-label-min">Often</span>
+            <input name="autoscan" type="range"/>
+            <span class="range-label-max">Never</span>
+          </div>
+          <output name="autoscan-description" for="autoscan">...</output>
+          <div id="apply-autoscan-row" class="apply-row hidden">
+            <input type="checkbox" id="apply-autoscan" name="apply-autoscan">
+            <label for="apply-autoscan" class="checkbox-label">Apply to existing links</label>
+          </div>
+        </fieldset>
+        <fieldset id="scanModeFieldset">
+          <label for="scan-mode">Scan mode:</label>
+          <select id="scan-mode" name="scan-mode">
+            <option value="auto">Automatic (recommended)</option>
+            <option value="standard">Standard</option>
+            <option value="dynamic">Dynamic</option>
+            <option value="popup">Popup</option>
+          </select>
+          <output name="scan-mode-description"></output>
+          <div id="scan-mode-lock-row" class="switch-row">
+            <label class="switch" for="scan-mode-locked">
+              <input type="checkbox" id="scan-mode-locked" name="scan-mode-locked" role="switch">
+              <span class="switch-track"></span>
+            </label>
+            <label for="scan-mode-locked" class="switch-text">Lock scan mode</label>
+          </div>
+          <p id="scan-mode-lock-help" class="field-help"></p>
+          <div id="translated-page-row" class="switch-row">
+            <label class="switch" for="translated-page">
+              <input type="checkbox" id="translated-page" name="translated-page" role="switch">
+              <span class="switch-track"></span>
+            </label>
+            <label for="translated-page" class="switch-text">Page is translated by the browser</label>
+          </div>
+          <p class="field-help">Turn this on if Firefox translates this page (its built-in translation). A translator rewrites text only as it scrolls into view, so Popup scans go a little slower on this link to let it finish; otherwise the scan can capture half-translated text and report changes that are not real. Leave it off for normal pages: the scan is faster.</p>
+          <div id="scan-mode-recheck-row" class="apply-row hidden">
+            <input type="checkbox" id="scan-mode-recheck" name="scan-mode-recheck">
+            <label for="scan-mode-recheck" class="checkbox-label">Check again for the best scan mode on the next scan</label>
+          </div>
+          <div id="apply-scan-mode-row" class="apply-row hidden">
+            <input type="checkbox" id="apply-scan-mode" name="apply-scan-mode">
+            <label for="apply-scan-mode" class="checkbox-label">Apply to existing links</label>
+          </div>
+        </fieldset>
         </div>
-        <p id="scan-mode-lock-help" class="field-help"></p>
-        <div id="scan-mode-recheck-row" class="apply-row hidden">
-          <input type="checkbox" id="scan-mode-recheck" name="scan-mode-recheck">
-          <label for="scan-mode-recheck" class="checkbox-label">Check again for the best scan mode on the next scan</label>
+        <div class="settings-col">
+        <fieldset id="thresholdFieldset">
+          <legend>Change Threshold:</legend>
+          <div class="slider">
+            <span class="range-label-min">Low</span>
+            <input name="threshold" type="range"/>
+            <span class="range-label-max">High</span>
+          </div>
+          <output name="threshold-description" for="autoscan">...</output>
+          <output name="threshold-subdescription" for="autoscan">(...)</output>
+          <div>
+            <input type="checkbox" id="ignore-numbers" name="ignore-numbers">
+            <label for="ignore-numbers" class="checkbox-label">Ignore changes to
+              numbers</label>
+          </div>
+          <div>
+            <input type="checkbox" id="ignore-dates" name="ignore-dates">
+            <label for="ignore-dates" class="checkbox-label"
+              title="Dates and times are not changes: a running clock (08:46:42 PM), 'Today at 7:46 PM', 'October 29, 2026', '2026-10-29' and '7 hours ago'.">Ignore
+              changes to dates and times</label>
+          </div>
+          <div>
+            <input type="checkbox" id="count-blocks" name="count-blocks">
+            <label for="count-blocks" class="checkbox-label"
+              title="For listing pages: a post or item with anything changed in it counts as ONE change, however much of it changed. Each changed block counts as 10, so a threshold of 10 ignores one changed block and 30 ignores three.">Count
+              each changed block (post, item) as one change</label>
+            <button type="button" id="show-tune-bar" class="browser-style hidden"
+              title="Show the block tuning bar in the Changes view of this link (the Alike slider). Its tick hides it again.">&#9881; Tuning bar</button>
+          </div>
+          <div id="block-match-group">
+            <label for="block-match" class="checkbox-label"
+              title="With block counting: a block that is at least this much the same (by words) as a block on the old page is NOT a change. Slide toward Loose if blocks that were only reworded keep showing up.">Blocks
+              this alike count as the same:</label>
+            <div class="slider">
+              <span class="range-label-min">Loose</span>
+              <input id="block-match" name="block-match" type="range" min="1" max="100" step="1" value="60"/>
+              <span class="range-label-max">Exact</span>
+            </div>
+            <output name="block-match-description" for="block-match">...</output>
+          </div>
+          <div id="apply-detection-row" class="apply-row hidden">
+            <input type="checkbox" id="apply-detection" name="apply-detection">
+            <label for="apply-detection" class="checkbox-label">Apply to existing links</label>
+          </div>
+          <div id="change-size-info" class="hidden">
+            <p id="change-size-text"></p>
+            <button type="button" id="use-suggested-threshold"
+                    class="browser-style hidden"></button>
+          </div>
+        </fieldset>
         </div>
-        <div id="apply-scan-mode-row" class="apply-row hidden">
-          <input type="checkbox" id="apply-scan-mode" name="apply-scan-mode">
-          <label for="apply-scan-mode" class="checkbox-label">Apply to existing links</label>
-        </div>
-      </fieldset>
+      </div>
 
+      <fieldset id="dynamicScanBudgetFieldset" class="hidden">
+        <legend>Dynamic scanning (global)</legend>
+        <label for="usr-dynamic-scan-max">Maximum Dynamic Scan Time:</label>
+        <div class="slider">
+          <span class="range-label-min">20 s</span>
+          <input id="usr-dynamic-scan-max" name="usr-dynamic-scan-max" type="range"
+                 min="20" max="45" step="1" value="25"/>
+          <span class="range-label-max">45 s</span>
+        </div>
+        <output id="usr-dynamic-scan-max-value" for="usr-dynamic-scan-max">25 seconds (default)</output>
+        <p>Automatic tries Standard, then Dynamic for up to this duration, then Popup if needed. Successful scans finish early. This is a global setting; existing site mode overrides are preserved.</p>
+      </fieldset>
       <fieldset id="notificationFieldset">
         <legend>Notifications:</legend>
 
@@ -188,11 +278,74 @@
       <fieldset id="scanOptions">
       </fieldset>
 
+      <fieldset id="deleteAllFieldset" class="danger-zone hidden">
+        <legend>Delete pages:</legend>
+        <div>
+          <button type="button" id="delete-all-button" class="browser-style danger">Delete all pages&hellip;</button>
+          <span id="delete-all-help" class="field-help"></span>
+        </div>
+      </fieldset>
+
+      <fieldset id="excludedFieldset" class="excluded-row">
+        <button type="button" id="excluded-details-toggle" class="browser-style"
+          aria-expanded="false" aria-controls="excluded-details"
+          title="Show the parts of this page that are included, ignored or excluded">Selected parts</button>
+        <button type="button" id="copy-ublock" class="browser-style hidden"
+          title="Copy the excluded parts as uBlock Origin filters, to paste into uBlock Origin's My filters and make them permanent">Copy as uBlock filters</button>
+      </fieldset>
+
+      <div id="excluded-details" class="hidden">
+        <h3>Included, ignored and excluded parts of this page</h3>
+        <div id="excluded-add-label">Add a rule by hand <span>(for a part the picker cannot reach)</span></div>
+        <div id="excluded-add-row">
+          <input type="text" id="excluded-add-text" placeholder="Add a rule by hand, e.g. #promo-bar or div.banner"
+            title="For a part that is not in the saved page (for example a bar a script slides in on the live site). Copy its selector from the browser's Inspect (Copy, CSS Selector) or from uBlock Origin's picker."/>
+          <select id="excluded-add-kind" title="Exclude is also copied as a uBlock Origin filter; Ignore only leaves it out of the scans.">
+            <option value="include">Include</option>
+            <option value="exclude">Exclude</option>
+            <option value="ignore">Ignore</option>
+          </select>
+          <button type="button" id="excluded-add-button" class="browser-style">Add</button>
+        </div>
+        <ul id="excluded-list"></ul>
+        <button type="button" id="clear-excluded" class="browser-style hidden"
+          title="Remove every ignored and excluded part from this list (press Ok to save)">Clear all</button>
+        <p class="field-help"><b>Include</b> means only selected regions count as changes while the rest stays visible. <b>Ignore</b> is for things you still want on the page but not counted as changes (a news ticker, a visitor counter). <b>Exclude</b> is for things you do not want at all (adverts, menu items): they are ignored too, and can be copied as uBlock Origin filters. Add parts with <b>Select parts&hellip;</b> in the page view, and choose Include, Ignore or Exclude in its window.</p>
+      </div>
+
       <div id="dialog-buttons">
         <button class="browser-style" id="cancel-button" type="reset">Cancel
         </button>
         <button class="browser-style default" type="submit" value="ok">Ok
         </button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="delete-all-dialog">
+    <form method="dialog" id="delete-all-form">
+      <h1 id="delete-all-title">Delete all pages</h1>
+      <div id="delete-all-step1">
+        <p id="delete-all-message1"></p>
+        <div id="delete-all-folders-row">
+          <input type="checkbox" id="delete-all-folders">
+          <label for="delete-all-folders" id="delete-all-folders-label" class="checkbox-label"></label>
+        </div>
+        <div>
+          <input type="checkbox" id="delete-all-understand">
+          <label for="delete-all-understand" class="checkbox-label"><b>I understand that this cannot be undone.</b></label>
+        </div>
+      </div>
+      <div id="delete-all-step2" class="hidden">
+        <p id="delete-all-message2"></p>
+        <input type="text" id="delete-all-typed" autocomplete="off" spellcheck="false">
+      </div>
+      <p id="delete-all-progress" class="hidden" role="status"></p>
+      <div class="delete-all-buttons">
+        <button type="button" class="browser-style default" id="delete-all-cancel">Cancel</button>
+        <button type="button" class="browser-style" id="delete-all-continue" disabled>Continue&hellip;</button>
+        <button type="button" class="browser-style danger hidden" id="delete-all-final" disabled>Delete</button>
+        <button type="button" class="browser-style hidden" id="delete-all-close">Close</button>
       </div>
     </form>
   </dialog>

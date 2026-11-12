@@ -12,7 +12,37 @@
     <div class="panel-section panel-section-header">
       <div class="icon-section-header"></div>
       <div class="text-section-header">Update Scanner</div>
+      <div id="header-icons">
+        <button id="live-pick-button" type="button" class="header-icon"
+          title="Pick parts of this page to ignore or exclude: ads, menus, bars (click a part, then Up until the outline covers it)">
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+            <g transform="rotate(45 12 12)" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round">
+              <rect x="9.3" y="0.8" width="5.4" height="6" rx="2.7"/>
+              <rect x="7.6" y="6.8" width="8.8" height="2.4" rx="0.8"/>
+              <path d="M9.6 9.2h4.8v7.3L12 22.2 9.6 16.5z"/>
+            </g>
+          </svg>
+        </button>
+        <button id="copy-filters-button" type="button" class="header-icon"
+          title="Copy filters to the clipboard: the parts you excluded, as filters to paste into uBlock Origin (Dashboard, My filters)">
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+            <path d="M9 4.5h5.5V7H9z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+            <path d="M9 5.5H5.5a1 1 0 0 0-1 1v13.5a1 1 0 0 0 1 1h6.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            <path d="M7.2 14.2l2 2 3-3.4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M12.5 19c.2-4.3 3-7 8-7.2M17.6 8.8l3.2 3-3.2 3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
     </div>
+
+    <div id="urs-scan-test-tools" style="display:none;padding:7px 12px;background:#f1f3f6;border-bottom:1px solid #ccc;font-size:12px;color:#222">
+      <label style="display:flex;align-items:center;gap:6px;cursor:pointer">
+        <input id="urs-pass-capture-checkbox" type="checkbox" style="margin:0">
+        Test: capture each Dynamic pass
+      </label>
+      <a id="urs-view-pass-captures" href="#" style="display:inline-block;margin:5px 0 0 20px">View captured passes</a>
+    </div>
+    <div id="popup-note" class="hidden"></div>
 
     <div class="panel-section panel-section-list">
       <div id="list" class="panel-list-content"></div>
@@ -25,9 +55,11 @@
     <div>
       <div id="menu-container">
         <ul id="menu" class="menu-content hidden">
+          <li id="page-settings-menu" title="Open the settings of the page in the current tab">Page Settings</li>
           <li id="global-settings-menu">Global Settings</li>
           <li id="scan-all-menu">Scan All Pages</li>
           <li id="backup-menu">Backup Pages</li>
+          <li id="live-hide-menu" title="Keep the parts you excluded hidden whenever you visit those sites (Update Scanner hides them itself, so uBlock Origin is not needed for that)">Hide excluded parts on sites</li>
           <li id="restore-menu">Restore Pages</li>
           <li id="help-menu">Help</li>
         </ul>

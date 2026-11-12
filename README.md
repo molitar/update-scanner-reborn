@@ -30,10 +30,14 @@ mode that captures the page completely:
   that only paint their pictures in a visible window or show a "verify you are
   human" check. About 30 seconds.
 
-Automatic works the mode out **once**, on the first scan, and then keeps it, so a
-site that is briefly down can never push a page up to a slower mode. The
-page header shows how a page was scanned ("last scanned today using dynamic at
-21:36").
+Automatic steps up and **stops as soon as one stage captures the page
+completely**: Standard first (up to 10 seconds, retried while the page loads),
+then Dynamic (up to the **Maximum Dynamic Scan Time**, 20 to 45 seconds, 25 by
+default, set in Global Settings), then Popup as the last fallback. It
+remembers what each page needed, so a link that needed Popup goes straight to
+Popup next time, and a site that is briefly down can never push a page up to a
+slower mode. The page header shows how a page was scanned ("last scanned today
+using dynamic at 21:36").
 
 You can also choose a mode by hand. A hand-picked mode is the mode that is
 used. The **Lock** switch means the mode never changes for any reason and no
@@ -50,8 +54,8 @@ missing.
 - Global change-detection controls.
 - Folder-wide change threshold and number handling, applied to every link
   in the folder (including subfolders) when you choose.
-- Fine change-threshold steps: every 10 characters up to 200, every 20 up to
-  300, every 25 up to 500, then every 100 up to 1500, for pages with counters,
+- Fine change-threshold steps: 0 (all changes), then every 5 characters up to
+  50, every 10 up to 200, every 20 up to 300, every 25 up to 500, then every 100 up to 1500, for pages with counters,
   rotating lists, or listing pages that add a batch of posts between scans. A
   change is measured in letters and digits of the visible text that changed;
   spaces, punctuation and decoration such as `[ENG]` or `|` do not count.
@@ -99,6 +103,53 @@ missing.
   are reading.
 - Individual website settings.
 
+### Select parts of a page: Include, Ignore, Exclude
+
+Press **Select parts...** in the page view and a small floating window opens.
+Click the part, use **Up / Down** (or the arrow keys) until the cyan dashed
+outline covers exactly that part, choose what **Add & Next** does, and press
+**Add & Next**; pick more parts, then **Finish**.
+
+- **Include:** only the selected regions count as changes; the rest of the page stays visible.
+- **Ignore:** a rotating ticker, a visitors-online box or an advert slot is left out of the comparison but stays visible.
+- **Exclude:** like Ignore, and the part is removed from the saved view and can be copied as a uBlock Origin filter.
+
+Nothing inside an ignored or excluded part is ever compared, counted or
+highlighted. The list is per link and is shown in Page Settings under
+**Selected parts**, where each part can be removed. On ad-heavy sites the live
+picker can also look through invisible click layers, block an exact third-party
+script host and (optionally) third-party frames.
+
+### Ignoring numbers, dates and times
+
+- **Ignore changes to numbers** works in the comparison itself, so a changed counter
+  ("24 Guests" to "21 Guests") or a running clock never creates a highlight.
+- **Ignore changes to dates and times** treats a clock, `Today at 7:46 PM`,
+  `October 29, 2026`, `2026-10-29` or `7 hours ago` as no change.
+
+### Listing pages: count changed blocks
+
+On a forum, blog or shop page each post is a block (title, date, picture, text).
+Counted by characters one new post can look like hundreds of changes. Tick
+**Count each changed block (post, item) as one change** (link, folder or global
+settings) and a post with anything changed in it counts as **one** change:
+
+- The Change Threshold becomes a number of blocks, with fine steps: 1 to 25, then
+  30, 35, 40, 45, 50, 60, 70.
+- A post that only moved down the page because a new one was added is not a
+  change. **Blocks this alike count as the same** (a slider from 1% to 100%, 60% by default; a tuning bar in the Changes view, switched on in Page Settings, shows the counts following it live) also
+  ignores a new comment count or one edited word.
+- The highlight goes on the text that really changed, or on the title of a new
+  post, and the picture stays clearly visible. Next / Previous makes one stop per
+  block.
+
+### Pages translated by the browser
+
+Firefox's built-in page translation rewrites text only as it scrolls into view,
+so a quick scan can capture half-translated text. Turn on **Page is translated
+by the browser** for such a link and its Popup scan pauses a little longer on the
+first sweep. Off (the default) keeps the fastest scan.
+
 ### Improved page monitoring
 
 - Enhanced JavaScript-rendered page snapshots.
@@ -108,6 +159,10 @@ missing.
 - Manual scan priority with automatic queue continuation.
 - Background-tab scanning without stealing focus.
 - Live sidebar scanning indicators.
+- Websites that are down: your last good copy is kept, a grey first failure, one
+  recheck three hours later, then a red status, a notification and a badge count.
+- Cloudflare error pages (such as error 521) are recognised.
+- **Delete all pages** (Folder and Global Settings) behind two confirmations.
 
 ### Notifications
 

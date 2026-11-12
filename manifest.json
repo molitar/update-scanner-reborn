@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "Update Scanner Reborn",
   "short_name": "Updatescan",
-  "version": "5.1.6",
+  "version": "5.3.0.119",
   "description": "Monitor website changes with intelligent scanning, JavaScript rendering, improved snapshots, visual highlighting, and configurable notifications.",
   "browser_specific_settings": {
     "gecko": {
@@ -28,7 +28,9 @@
     "tabs",
     "unlimitedStorage",
     "*://twitter.com/*",
-    "*://www.facebook.com/*"
+    "*://www.facebook.com/*",
+    "webRequest",
+    "webRequestBlocking"
   ],
   "background": {
     "page": "app/background/background.html"
@@ -58,5 +60,20 @@
         "default": "Alt+U"
       }
     }
-  }
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "js": [
+        "lib/live_picker/selector_core.js",
+        "lib/live_hide/live_hide.js"
+      ],
+      "run_at": "document_start",
+      "all_frames": false
+    }
+  ],
+  "version_name": "5.3.0 build 119"
 }
